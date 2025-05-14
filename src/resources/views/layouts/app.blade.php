@@ -12,7 +12,7 @@
 <header class="header">
     <div class="header-inner">
         <div class="header-logo">
-            <a href="#"></a>
+            <a href="#"><img src="img/logo.svg" alt=""></a>
         </div>
         <div class="header-form">
             <form action="#" class="header-form_form">

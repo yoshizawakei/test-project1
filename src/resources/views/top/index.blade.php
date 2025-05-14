@@ -5,9 +5,13 @@
 @endsection
 
 @section('content')
+<div class="tag-container">
+    <button class="tab-button active" onclick="showPage('recommend')">おすすめ</button>
+    <button class="tag-button" onclick="showPage('mylist')">マイリスト</button>
+</div>
 
 <div class="title">
-    <div class="title">おすすめ</div>
+    <div class="title-div">おすすめ</div>
 </div>
 <div class="product-grid">
     <div class="product-item">
