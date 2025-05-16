@@ -11,4 +11,9 @@ class ItemController extends Controller
         return view("top.index");
     }
 
+    public function show()
+    {
+        return view("items.detail");
+    }
+
 }
