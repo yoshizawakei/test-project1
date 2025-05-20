@@ -165,7 +165,7 @@
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
-        /* 1カラム表示に変更 */
+        margin: 0 auto;
     }
 
     .product-image {

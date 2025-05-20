@@ -22,8 +22,8 @@
         </div>
         <nav class="header-nav">
             <ul class="header-nav_list">
-                <li><a href="#">ログイン</a></li>
-                <li><a href="#">マイページ</a></li>
+                <li><a href="/register">ログイン</a></li>
+                <li><a href="/mypage">マイページ</a></li>
                 <li>
                     <form action="#">
                         @csrf
