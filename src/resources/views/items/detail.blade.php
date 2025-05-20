@@ -7,13 +7,13 @@
 @section('content')
     <div class="container">
         <div class="product-image">
-            <img src="https://placehold.jp/300x300.png" alt="商品画像">
+            <img src="{{ $item["image_path"] }}" alt="商品画像">
         </div>
         <div class="product-details">
-            <h1 class="product-title">商品名がここに入る</h1>
-            <p class="brand-name">ブランド名</p>
+            <h1 class="product-title">{{ $item["item_name"] }}</h1>
+            <p class="brand-name">ブランド名：{{ $item->brand->name }}</p>
             <div class="price-info">
-                <span class="price">¥47,000</span> <span class="tax">(税込)</span>
+                <span class="price">¥{{ number_format($item["price"]) }}</span> <span class="tax">(税込)</span>
             </div>
             <div class="review-wishlist">
                 <div class="review">
@@ -28,17 +28,17 @@
             <div class="product-description">
                 <h2>商品説明</h2>
                 <ul>
-                    <li>カラー：<span class="detail-value">グレー</span></li>
-                    <li>状態：<span class="detail-value">新品</span></li>
-                    <li>詳細：<span class="detail-value">商品の状態は良好です。傷もありません。購入後、即日発送いたします。</span></li>
+                    <li>カラー：<span class="detail-value">{{ $item->color->name }}</span></li>
+                    <li>状態：<span class="detail-value">{{ $item->status->name }}</span></li>
+                    <li>詳細：<span class="detail-value">{{ $item["description"] }}</span></li>
                 </ul>
             </div>
 
             <div class="product-info">
                 <h2>商品の情報</h2>
                 <ul>
-                    <li>カテゴリー：<span class="detail-value">洋服</span>, <span class="detail-value">メンズ</span></li>
-                    <li>商品の状態：<span class="detail-value">良好</span></li>
+                    <li>カテゴリー：<span class="detail-value">{{ $item->category->name }}</span>, <span class="detail-value">{{ $item->category->name }}</span></li>
+                    <li>商品の状態：<span class="detail-value">{{ $item["condition"] }}</span></li>
                 </ul>
             </div>
 

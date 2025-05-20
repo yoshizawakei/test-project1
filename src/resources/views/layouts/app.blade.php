@@ -12,11 +12,11 @@
 <header class="header">
     <div class="header-inner">
         <div class="header-logo">
-            <a href="#"><img src="img/logo.svg" alt=""></a>
+            <a href="/"><img src="{{ asset("img/logo.svg") }}" alt="coachtech"></a>
         </div>
         <div class="header-form">
             <form action="#" class="header-form_form">
-                <input type="text" placeholder="なにをお探しですか？" class="header-form_input" name="#">
+                <input name="search" type="text" placeholder="なにをお探しですか？" class="header-form_input" name="#">
                 <button class="header-form_button">検索</button>
             </form>
         </div>
@@ -27,7 +27,7 @@
                 <li>
                     <form action="#">
                         @csrf
-                        <button>出品</button>
+                        <button type="submit">出品</button>
                     </form>
                 </li>
             </ul>
