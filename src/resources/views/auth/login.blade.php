@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section("css")
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
@@ -11,8 +11,7 @@
             @csrf
             <div class="form-group">
                 <label for="email" class="form-label">メールアドレス</label>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email"
-                    value="{{ old('email') }}" required autocomplete="email" autofocus>
+                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="email" autofocus>
                 @error('email')
                     <span class="error-message" role="alert">
                         <strong>{{ $message }}</strong>
@@ -22,8 +21,7 @@
 
             <div class="form-group">
                 <label for="password" class="form-label">パスワード</label>
-                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                    name="password" required autocomplete="current-password">
+                <input id="password" type="password" class="form-control" name="password" autocomplete="current-password">
                 @error('password')
                     <span class="error-message" role="alert">
                         <strong>{{ $message }}</strong>

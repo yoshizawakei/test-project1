@@ -22,7 +22,11 @@
         </div>
         <nav class="header-nav">
             <ul class="header-nav_list">
-                <li><a href="/register">ログイン</a></li>
+                @if(Auth::check())
+                    <li><a href="/logout">ログアウト</a></li>
+                @else
+                    <li><a href="/login">ログイン</a></li>
+                @endif
                 <li><a href="/mypage">マイページ</a></li>
                 <li>
                     <form action="#">

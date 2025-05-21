@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('css/register.css') }}">
@@ -7,13 +7,12 @@
 @section('content')
     <div class="register-container">
         <h2 class="register-title">会員登録</h2>
-        <form method="POST" action="{{ route('register') }}">
+        <form method="post" action="/register" class="register-form">
             @csrf
-
             <div class="form-group">
                 <label for="name" class="form-label">ユーザー名</label>
-                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name"
-                    value="{{ old('name') }}" required autocomplete="name" autofocus>
+                <input id="name" type="text" class="form-control" name="name"
+                    value="{{ old('name') }}" autocomplete="name" autofocus>
                 @error('name')
                     <span class="error-message" role="alert">
                         <strong>{{ $message }}</strong>
@@ -23,8 +22,7 @@
 
             <div class="form-group">
                 <label for="email" class="form-label">メールアドレス</label>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email"
-                    value="{{ old('email') }}" required autocomplete="email">
+                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="email">
                 @error('email')
                     <span class="error-message" role="alert">
                         <strong>{{ $message }}</strong>
@@ -34,8 +32,7 @@
 
             <div class="form-group">
                 <label for="password" class="form-label">パスワード</label>
-                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                    name="password" required autocomplete="new-password">
+                <input id="password" type="password" class="form-control" name="password" autocomplete="new-password">
                 @error('password')
                     <span class="error-message" role="alert">
                         <strong>{{ $message }}</strong>
@@ -45,8 +42,7 @@
 
             <div class="form-group">
                 <label for="password-confirm" class="form-label">確認用パスワード</label>
-                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required
-                    autocomplete="new-password">
+                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" autocomplete="new-password">
             </div>
 
             <button type="submit" class="btn-primary">

@@ -3,6 +3,8 @@
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Mail\TestMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::get("/", [ItemController::class, "index"]);
 Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail');
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('auth')->group(function () {
+    
+});
+
+Route::get("/sent-test-mail", function () {
+    Mail::to("kei_yszwa_2525@yahoo.co.jp")->send(new TestMail());
+    return "Test email sent!";
+});
