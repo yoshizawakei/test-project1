@@ -41,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+
     ];
 
     // このユーザーが購入した商品とのリレーション

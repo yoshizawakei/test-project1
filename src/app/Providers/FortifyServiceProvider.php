@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Illuminate\Auth\MustVerifyEmail;
+use App\Http\Responses\CustomRegisterResponse;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -36,7 +39,7 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.login');
         });
         Fortify::verifyEmailView(function () {
-            return view('auth.verify-email');
+            return view("auth.verify-email");
         });
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
@@ -51,5 +54,7 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
+
+        $this->app->singleton(RegisterResponseContract::class, CustomRegisterResponse::class);
     }
 }

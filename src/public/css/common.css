@@ -137,8 +137,8 @@
 }
 
 .header-nav_list li button {
-    background-color: #e44d26;
-    color: #FFFFFF;
+    background-color: #000;
+    color: #fff;
     border: none;
     padding: 8px 15px;
     border-radius: 2px;
@@ -152,6 +152,16 @@
 .header-nav_list li button:hover {
     background-color: #333;
     color: #fff;
+}
+
+.header-nav_button {
+    background-color: #fff;
+    color: #000;
+}
+
+.header-nav_button:hover {
+    color: #fff;
+    background-color: #555;
 }
 
 
@@ -273,7 +283,7 @@
         border-radius: 2px;
         cursor: pointer;
         font-size: 1em;
-        background-color: #e44d26;
+        background-color: #000;
         color: #FFFFFF;
         border: none;
         transition: background-color 0.2s ease-in-out;

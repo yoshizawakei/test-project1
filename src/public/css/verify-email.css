@@ -1,106 +1,72 @@
-.confirm-container {
+.container {
     background-color: #fff;
-    padding: 40px 60px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    /* コンテナの最大幅 */
-    width: 100%;
-    box-sizing: border-box;
+    padding: 40px;
     text-align: center;
-    /* タイトル、ボタン、リンクを中央揃え */
-}
-
-.confirm-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-.confirm-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    /* 各確認グループ間のスペース */
-}
-
-.form-group-confirm {
-    background-color: #f9f9f9;
-    /* 確認項目の背景色 */
-    border: 1px solid #eee;
-    /* 枠線 */
-    border-radius: 5px;
-    padding: 15px 20px;
-    text-align: left;
-    /* テキストを左揃え */
-}
-
-.confirm-label {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.confirm-value {
-    font-size: 17px;
-    color: #333;
-    margin: 0;
-    /* デフォルトのマージンをリセット */
-    word-wrap: break-word;
-    /* 長い文字列の改行 */
-}
-
-.button-group {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
     margin-top: 30px;
-    /* ボタン群の上の余白 */
-    display: flex;
-    flex-direction: column;
-    /* ボタンを縦に並べる */
-    gap: 15px;
-    /* ボタン間のスペース */
 }
 
-.btn-primary {
-    background-color: #007bff;
-    color: #fff;
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.status-message {
+    background-color: #e3f2fd;
+    color: #1e88e5;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.message {
+    color: #333;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.main-button_div {
     width: 100%;
-    box-sizing: border-box;
+}
+
+.main-button {
+    display: inline-block;
+    background-color: #D9D9D9;
+    color: #000;
+    padding: 12px 30px;
+    border-radius: 3px;
     text-decoration: none;
-    /* aタグの場合に下線を消す */
-    display: block;
-    /* aタグをブロック要素にする */
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    /* 修正ボタンの色 */
-    color: #fff;
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 1.1em;
     transition: background-color 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-    text-decoration: none;
-    /* aタグの下線を消す */
-    display: block;
-    /* aタグをブロック要素にする */
 }
 
-.btn-secondary:hover {
-    background-color: #5a6268;
+.main-button:hover {
+    background-color: #B0B0B0;
+}
+
+.text-sm {
+    color: #777;
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: color 0.3s ease;
+    padding: 0;
+    margin: 0;
+}
+
+.resend-link:hover {
+    color: #0056b3;
+}
+
+.inline-block {
+    display: inline-block;
+    margin-top: 30px;
 }
