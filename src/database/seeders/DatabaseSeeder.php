@@ -20,6 +20,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // ユーザーテーブルのシーダーを呼び出す
+        $this->call([
+            UsersTableSeeder::class,
+        ]);
+
         Brand::factory(10)->create();
         Category::factory(10)->create();
         Color::factory(10)->create();
@@ -28,6 +33,5 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ItemsTableSeeder::class,
         ]);
-        // \App\Models\User::factory(10)->create();
     }
 }

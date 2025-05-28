@@ -29,3 +29,4 @@ Route::middleware(["auth", "verified"])->group(function () {
 });
 
 Route::get("/profile/mypage", [ProfileController::class, "index"])->name("profile.mypage");
+Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");

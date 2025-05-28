@@ -15,6 +15,8 @@ use Laravel\Fortify\Fortify;
 use Illuminate\Auth\MustVerifyEmail;
 use App\Http\Responses\CustomRegisterResponse;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
+use App\Http\Responses\CustomLoginResponse;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -23,7 +25,9 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LoginResponseContract::class, CustomLoginResponse::class
+        );
+        $this->app->singleton(RegisterResponseContract::class, CustomRegisterResponse::class);
     }
 
     /**
@@ -55,6 +59,6 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
-        $this->app->singleton(RegisterResponseContract::class, CustomRegisterResponse::class);
+
     }
 }

@@ -22,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'profile_configured',
     ];
 
     /**
@@ -41,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'profile_configured' => 'boolean',
 
     ];
 
@@ -48,5 +50,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function purchasedItems(): HasMany
     {
         return $this->hasMany(Item::class, 'buyer_id');
+    }
+
+    // このユーザーが出品した商品とのリレーション
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
+    }
+
+    // このユーザーのプロフィールとのリレーション
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
     }
 }

@@ -14,7 +14,8 @@
                 画像を編集する
             </button>
         </div>
-        <form action="#" method="POST" class="profile-form">
+        <form action="/profile/edit" method="POST" class="profile-form">
+            @csrf
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
                 <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください">
@@ -22,7 +23,7 @@
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postcode" class="form-input" placeholder="例: 123-4567">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567">
             </div>
 
             <div class="form-group">
