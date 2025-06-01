@@ -18,9 +18,7 @@
     height: auto;
     background-color: #ddd;
     aspect-ratio: 1 / 1;
-    /* 正方形を維持 */
     object-fit: cover;
-    /* 画像がアスペクト比を保ちつつ領域を埋める */
 }
 
 .product-details {
@@ -53,23 +51,25 @@
     font-size: 0.9em;
 }
 
-.review-wishlist {
+.comment-like_list {
     display: flex;
     gap: 15px;
     margin-bottom: 15px;
     color: #555;
 }
 
-.review,
-.wishlist {
+.comment-count,
+.like-count {
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.star-icon,
-.heart-icon {
+.comment-icon img,
+.like-icon img {
     font-size: 1.2em;
+    height: 20px;
+    width: 20px;
 }
 
 .purchase-button {
@@ -89,10 +89,14 @@
 
 .product-description,
 .product-info,
-.comments-section,
-.add-comment-section {
+.comments-section {
     margin-bottom: 20px;
     padding: 15px;
+}
+
+.add-comment-section {
+    margin-top: 20px;
+    padding: 15px 0;
 }
 
 .product-description h2,
@@ -101,8 +105,9 @@
 .add-comment-section h2 {
     font-size: 1.2em;
     margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
 }
 
 .product-description ul,
@@ -120,31 +125,67 @@
     color: #333;
 }
 
+.comments-list {
+    margin-top: 15px;
+}
+
 .comment {
-    border-left: 3px solid #e44d26;
-    padding-left: 10px;
-    margin-bottom: 10px;
+    border: 1px solid #e44d26;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .comment-author {
     font-weight: bold;
     margin-bottom: 5px;
     color: #555;
+    display: flex;
+    align-items: center;
 }
 
+.comment-author small {
+    font-weight: normal;
+    color: #999;
+    margin-left: 10px;
+    font-size: 0.85em;
+}
 .comment-text {
     color: #333;
     margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.delete-comment-form {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+}
+
+.btn-danger.btn-sm {
+    background-color: #e44d26;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.btn-danger.btn-sm:hover {
+    background-color: #c8401d;
 }
 
 .add-comment-section textarea {
     width: 100%;
-    padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
     min-height: 80px;
+    resize: vertical;
 }
 
 .submit-comment-button {
@@ -161,6 +202,35 @@
     background-color: #4cae4c;
 }
 
+/* エラーメッセージとアラート */
+.alert-info {
+    padding: 12px;
+    background-color: #e0f2f7;
+    /* infoカラーを少し調整 */
+    border: 1px solid #b3e0ed;
+    color: #0d6efd;
+    /* Bootstrapのprimaryカラーに合わせて文字色を調整 */
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+
+.alert-info a {
+    color: #0d6efd;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.add-comment-section textarea.is-invalid {
+    border-color: #dc3545;
+}
+
 /* レスポンシブ対応 (768px以下の画面幅の場合) */
 @media (max-width: 768px) {
     .container {
@@ -170,5 +240,19 @@
 
     .product-image {
         margin-bottom: 20px;
+    }
+
+    .product-image,
+    .product-details {
+        padding: 0 15px;
+        /* モバイルでの左右の余白 */
+    }
+
+    .product-description,
+    .product-info,
+    .comments-section {
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 15px;
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\TestMail;
@@ -30,3 +31,18 @@ Route::middleware(["auth", "verified"])->group(function () {
 
 Route::get("/profile/mypage", [ProfileController::class, "index"])->name("profile.mypage");
 Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
+
+Route::middleware("auth")->group(function () {
+    Route::post("/items/{item}/comments", [CommentController::class, "store"])->name("comments.store");
+    Route::delete("/comments/{comment}", [CommentController::class, "destroy"])->name("comments.destroy");
+});
+
+
+
+Route::get("/send-test-mail", function () {
+    $name = "テストユーザー";
+    $message_body = "これはLaravelから送信されたテストメールです。";
+
+    Mail::to("test@example")->send(new TestMail($name, $message_body));
+    return "Test email sent successfully!";
+});

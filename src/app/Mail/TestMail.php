@@ -11,14 +11,18 @@ class TestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $name;
+    public $message_body;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($name, $message_body)
     {
-        //
+        $this->name = $name;
+        $this->message_body = $message_body;
     }
 
     /**
@@ -28,8 +32,11 @@ class TestMail extends Mailable
      */
     public function build()
     {
-        return $this->subject("Test Mail from Laravel")
-            ->from(config('mail.from.address'), config('mail.from.name'))
-            ->view("emails.test");
+        return $this->view('emails.test')
+                    ->subject('Test Email from Laravel')
+                    ->with([
+                        'name' => $this->name,
+                        'message_body' => $this->message_body,
+                    ]);
     }
 }

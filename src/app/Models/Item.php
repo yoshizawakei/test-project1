@@ -59,5 +59,11 @@ class Item extends Model
     {
         return $this->belongsTo(User::class, 'buyer_id');
     }
+    
+    // コメントとの紐付け
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 
 }

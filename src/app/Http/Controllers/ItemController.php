@@ -14,8 +14,7 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Item::with(['user', 'category', 'brand', 'color', 'status'])->get();
-        // $items = Item::with(['user', 'category', 'brand', 'color', 'status'])->paginate(10);
+        $items = Item::with(['user', 'category', 'brand', 'color', 'status'])->inRandomOrder()->get();
         return view("top.index", compact("items"));
     }
 

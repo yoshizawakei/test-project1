@@ -15,12 +15,13 @@
             <div class="price-info">
                 <span class="price">¥{{ number_format($item["price"]) }}</span> <span class="tax">(税込)</span>
             </div>
-            <div class="review-wishlist">
-                <div class="review">
-                    <span class="star-icon">☆</span> <span class="review-count">0</span>
+            <div class="comment-like_list">
+                <div class="like-count">
+                    <span class="like-icon"><img src="{{ asset("img/star_icon.png") }}" alt="comment"></span> <span class="like-count">1</span>
                 </div>
-                <div class="wishlist">
-                    <span class="heart-icon">♡</span> <span class="wishlist-count">1</span>
+                <div class="comment-count">
+                    <span class="comment-icon"><img src="{{ asset("img/comment_icon.png") }}" alt="comment"></span>
+                    <span class="comment-count">{{ $item->comments->count() }}</span>
                 </div>
             </div>
             <button class="purchase-button">購入手続きへ</button>
@@ -43,17 +44,46 @@
             </div>
 
             <div class="comments-section">
-                <h2>コメント(1)</h2>
-                <div class="comment">
-                    <p class="comment-author">admin</p>
-                    <p class="comment-text">こちらにコメントが入ります。</p>
-                </div>
+                <h2>コメント({{ $item->comments->count() }})</h2>
+                <div class="comments-list">
+                    @forelse ($item->comments->sortByDesc("created_at") as $comment)
+                    <div class="comment">
+                        <p class="comment-author">
+                            {{ $comment->user->name }}
+                            <small class="text-muted">{{ $comment->created_at->format("Y/m/d H:i") }}</small>
+                        </p>
+                        <p class="comment-text">{{ $comment->comment }}</p>
+                        @if (Auth::id() === $comment->user_id)
+                        <form action="{{ route("comments.destroy", $comment) }}" method="post" onsubmit="return confirm('本当にこのコメントを削除しますか？');" class="delete-comment-form">
+                            @csrf
+                            @method("DELETE")
+                            <button class="btn btn-danger btn-sm">削除</button>
+                        </form>
+                        @endif
+                    </div>
+                @empty
+                    <p>まだコメントがありません。</p>
+                @endforelse
             </div>
 
             <div class="add-comment-section">
                 <h2>商品へのコメント</h2>
-                <textarea placeholder="コメントを入力"></textarea>
-                <button class="submit-comment-button">コメントを送信する</button>
+                @auth
+                    <form action="{{ route("comments.store", $item) }}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <textarea name="comment" class="form-control" rows="3" placeholder="コメントを入力してください">{{ old("comment") }}</textarea>
+                            @error('comment')
+                            <div class="invalid-feedback"> {{ $message }}</div>
+                            @enderror
+                        </div>
+                        <button class="submit-comment-button" type="submit">コメントを送信する</button>
+                    </form>
+                @else
+                    <div class="alert alert-info">
+                        コメントを投稿するには<a href="{{ route('login') }}">ログイン</a>してください。
+                    </div>
+                @endauth
             </div>
         </div>
     </div>

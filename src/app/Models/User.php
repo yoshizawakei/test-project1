@@ -63,4 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Profile::class);
     }
+
+    // このユーザーがコメントした商品とのリレーション
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
