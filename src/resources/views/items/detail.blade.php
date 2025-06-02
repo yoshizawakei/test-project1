@@ -16,11 +16,27 @@
                 <span class="price">¥{{ number_format($item["price"]) }}</span> <span class="tax">(税込)</span>
             </div>
             <div class="comment-like_list">
-                <div class="like-count">
-                    <span class="like-icon"><img src="{{ asset("img/star_icon.png") }}" alt="comment"></span> <span class="like-count">1</span>
+                <div class="like-button-wrapper">
+                    <button id="like-button"
+                            class="btn {{ Auth::check() && Auth::user()->isLiking($item) ? 'btn-danger' : 'btn-outline-secondary' }}"
+                            data-item-id="{{ $item->id }}"
+                            data-liked="{{ Auth::check() && Auth::user()->isLiking($item) ? 'true' : 'false' }}"
+                            data-logged-in="{{ Auth::check() ? 'true' : 'false' }}">
+                        <i class="fas fa-heart"></i>
+                        <span id="like-text">
+                            @if (Auth::check())
+                                {{ Auth::user()->isLiking($item) ? 'いいね済み' : 'いいね' }}
+                            @else
+                                いいね
+                            @endif
+                        </span>
+                    </button>
+                    <span id="likes-count" class="like-count-display">{{ $item->likesCount() }}</span>
                 </div>
                 <div class="comment-count">
-                    <span class="comment-icon"><img src="{{ asset("img/comment_icon.png") }}" alt="comment"></span>
+                    <span class="comment-icon">
+                        <img src="{{ asset("img/comment_icon.png") }}" alt="comment">
+                    </span>
                     <span class="comment-count">{{ $item->comments->count() }}</span>
                 </div>
             </div>
@@ -87,4 +103,62 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    {{-- Font AwesomeのCDNを追加（アイコン表示のため） --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- jQueryを使用する場合 --}}
+    <script>
+        $(document).ready(function () {
+            $('#like-button').on('click', function () {
+                const button = $(this);
+                const itemId = button.data('item-id');
+                const isLoggedIn = button.data('logged-in'); // ログイン状態を取得
+
+                // ログインしていない場合はログインページへリダイレクト
+                if (!isLoggedIn) {
+                    // Laravelのログインルートへリダイレクト
+                    window.location.href = "{{ route('login') }}";
+                    return; // ここで処理を終了
+                }
+
+                let liked = button.data('liked'); // 現在のいいね状態
+
+                // CSRFトークンを取得
+                // CSRFトークンがmetaタグに設定されていることを前提としています
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: `/items/${itemId}/like`, // ルートのURLに合わせて調整
+                    type: 'POST',
+                    data: {
+                        _token: csrfToken // CSRFトークンを送信
+                    },
+                    dataType: 'json', // レスポンスのデータタイプをJSONに指定
+                    success: function (response) {
+                        if (response.liked) {
+                            // いいねされた場合
+                            button.removeClass('btn-outline-secondary').addClass('btn-danger');
+                            $('#like-text').text('いいね済み');
+                            button.data('liked', true);
+                        } else {
+                            // いいねが解除された場合
+                            button.removeClass('btn-danger').addClass('btn-outline-secondary');
+                            $('#like-text').text('いいね');
+                            button.data('liked', false);
+                        }
+                        // いいね数を更新
+                        $('#likes-count').text(response.likes_count);
+
+                        console.log(response.message);
+                    },
+                    error: function (xhr) {
+                        console.error('Error:', xhr.responseText);
+                        alert('いいね処理中にエラーが発生しました。');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -69,4 +69,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Comment::class);
     }
+
+    // このユーザーがいいねした商品とのリレーション
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // いいねしているかどうかを確認するメソッド
+    public function isLiking(Item $item)
+    {
+        return $this->likes()->where("item_id", $item->id)->exists();
+    }
 }

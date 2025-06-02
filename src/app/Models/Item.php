@@ -66,4 +66,16 @@ class Item extends Model
         return $this->hasMany(Comment::class);
     }
 
+    // いいねとの紐付け
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    // いいねの数を取得する
+    public function likesCount()
+    {
+        return $this->likes()->count();
+    }
+
 }

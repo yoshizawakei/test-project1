@@ -3,6 +3,7 @@
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\TestMail;
@@ -18,9 +19,11 @@ use App\Mail\TestMail;
 |
 */
 
+// トップページ関係
 Route::get("/", [ItemController::class, "index"]);
 Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail');
 
+// Item関係
 Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/items/create", [ItemController::class, "create"]);
     Route::post("/items", [ItemController::class, "store"]);
@@ -29,16 +32,24 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::delete("/items/{item}", [ItemController::class, "destroy"]);
 });
 
+// Profile関係
 Route::get("/profile/mypage", [ProfileController::class, "index"])->name("profile.mypage");
 Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
 
+
+// Comment関係
 Route::middleware("auth")->group(function () {
     Route::post("/items/{item}/comments", [CommentController::class, "store"])->name("comments.store");
     Route::delete("/comments/{comment}", [CommentController::class, "destroy"])->name("comments.destroy");
 });
 
+// Like関係
+Route::middleware("auth")->group(function () {
+    Route::post("/items/{item}/like", [LikeController::class, "toggle"])->name("items.like.toggle");
+    Route::get("/mypage/likes", [LikeController::class, "index"])->name("mypage.likes");
+});
 
-
+// メールテスト
 Route::get("/send-test-mail", function () {
     $name = "テストユーザー";
     $message_body = "これはLaravelから送信されたテストメールです。";
