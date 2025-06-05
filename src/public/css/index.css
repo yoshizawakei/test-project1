@@ -84,13 +84,13 @@
 
 
 @media (max-width: 1024px) {
-    .product-grid .active-content {
+    .product-grid.active-content {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .product-grid .active-content {
+    .product-grid.active-content {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -100,7 +100,7 @@
 }
 
 @media (max-width: 480px) {
-    .product-grid .active-content {
+    .product-grid.active-content {
         grid-template-columns: 1fr;
     }
 

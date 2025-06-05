@@ -22,14 +22,7 @@
                             data-item-id="{{ $item->id }}"
                             data-liked="{{ Auth::check() && Auth::user()->isLiking($item) ? 'true' : 'false' }}"
                             data-logged-in="{{ Auth::check() ? 'true' : 'false' }}">
-                        <i class="fas fa-heart"></i>
-                        <span id="like-text">
-                            @if (Auth::check())
-                                {{ Auth::user()->isLiking($item) ? 'いいね済み' : 'いいね' }}
-                            @else
-                                いいね
-                            @endif
-                        </span>
+                        <i id="like-icon" class="fa-heart {{ Auth::check() && Auth::user()->isLiking($item) ? 'fas' : 'far' }}"></i>
                     </button>
                     <span id="likes-count" class="like-count-display">{{ $item->likesCount() }}</span>
                 </div>
@@ -114,42 +107,37 @@
             $('#like-button').on('click', function () {
                 const button = $(this);
                 const itemId = button.data('item-id');
-                const isLoggedIn = button.data('logged-in'); // ログイン状態を取得
+                const isLoggedIn = button.data('logged-in');
 
-                // ログインしていない場合はログインページへリダイレクト
                 if (!isLoggedIn) {
-                    // Laravelのログインルートへリダイレクト
                     window.location.href = "{{ route('login') }}";
-                    return; // ここで処理を終了
+                    return;
                 }
 
-                let liked = button.data('liked'); // 現在のいいね状態
-
-                // CSRFトークンを取得
-                // CSRFトークンがmetaタグに設定されていることを前提としています
+                let liked = button.data("liked");
                 const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                const likeIcon = $('#like-icon');
+                const likesCountSpan = $('#likes-count'); // ここで要素を正しく取得しています
 
                 $.ajax({
-                    url: `/items/${itemId}/like`, // ルートのURLに合わせて調整
+                    url: `/items/${itemId}/like`,
                     type: 'POST',
                     data: {
-                        _token: csrfToken // CSRFトークンを送信
+                        _token: csrfToken
                     },
-                    dataType: 'json', // レスポンスのデータタイプをJSONに指定
+                    dataType: 'json',
                     success: function (response) {
                         if (response.liked) {
-                            // いいねされた場合
                             button.removeClass('btn-outline-secondary').addClass('btn-danger');
-                            $('#like-text').text('いいね済み');
+                            likeIcon.removeClass('far').addClass('fas');
                             button.data('liked', true);
                         } else {
-                            // いいねが解除された場合
                             button.removeClass('btn-danger').addClass('btn-outline-secondary');
-                            $('#like-text').text('いいね');
+                            likeIcon.removeClass('fas').addClass('far');
                             button.data('liked', false);
                         }
-                        // いいね数を更新
-                        $('#likes-count').text(response.likes_count);
+                        // ここで likesCountSpan 変数を使ってテキストを更新します。
+                        likesCountSpan.text(response.likes_count);
 
                         console.log(response.message);
                     },

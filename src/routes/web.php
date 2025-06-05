@@ -4,6 +4,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MylistController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\TestMail;
@@ -48,6 +49,9 @@ Route::middleware("auth")->group(function () {
     Route::post("/items/{item}/like", [LikeController::class, "toggle"])->name("items.like.toggle");
     Route::get("/mypage/likes", [LikeController::class, "index"])->name("mypage.likes");
 });
+
+// mylist関係
+Route::middleware("auth")->get("/api/mylist", [MylistController::class, "index"]);
 
 // メールテスト
 Route::get("/send-test-mail", function () {

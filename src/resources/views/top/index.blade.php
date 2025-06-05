@@ -58,6 +58,70 @@
             button.classList.remove('active');
         });
         event.currentTarget.classList.add('active');
+
+        if (pageId === "mylist") {
+            loadMylistItems();
+        }
     }
+
+    async function loadMylistItems() {
+        const mylistContent = document.getElementById('mylist-content');
+        mylistContent.innerHTML = '<p>マイリストを読み込み中...</p>';
+
+    try {
+            const response = await fetch("/api/mylist", {
+                method: "GET",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    "Accept": "application/json"
+                }
+            });
+
+            if (response.status === 401) {
+                mylistContent.innerHTML = "<p>マイリストを表示するにはログインが必要です。</p>";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("HTTP error! Status: ${response.status}");
+            }
+
+            const items = await response.json();
+
+            if (items.length === 0) {
+                mylistContent.innerHTML = "<p>マイリストはまだ登録されていません。</p>";
+            } else {
+                mylistContent.innerHTML = "";
+                items.forEach(item => {
+                    const productItemHtml = `
+                        <a href="/items/${item.id}" class="product-item-link">
+                            <div class="product-item">
+                                <div class="product-image">
+                                    <img src="${item.image_path}" alt="${item.item_name}">
+                                </div>
+                                <div class="product-name">${item.item_name}</div>
+                                <div class="product-price">¥${numberWithCommas(item.price)}</div>
+                            </div>
+                        </a>
+                    `;
+                    mylistContent.insertAdjacentHTML("beforeend", productItemHtml);
+                });
+            }
+        } catch (error) {
+            console.error("マイリストの読み込み中にエラーが発生しました:", error);
+            mylistContent.innerHTML = "<p>マイリストの読み込み中にエラーが発生しました。</p>";
+        }
+    }
+
+    function numberWithCommas(x) {
+        if (x === null || typeof x === "undefined") {
+            return " ";
+        }
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // document.addEventListener("DOMContentLoaded", () => {
+
+    // });
 </script>
 @endsection

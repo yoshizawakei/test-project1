@@ -37,7 +37,7 @@ class LikeController extends Controller
             return response()->json([
                 "message" => $message,
                 "liked" => $liked,
-                "like_count" => $item->likes()->count(),
+                "likes_count" => $item->likes()->count(),
             ]);
         }
         return redirect()->back()->with("success", $message);
