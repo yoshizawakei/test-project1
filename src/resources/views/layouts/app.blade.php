@@ -17,40 +17,57 @@
             <div class="header-logo">
                 <a href="/"><img src="{{ asset("img/logo.svg") }}" alt="coachtech"></a>
             </div>
-            <div class="header-form">
-                <form action="#" class="header-form_form">
-                    <input name="search" type="text" placeholder="なにをお探しですか？" class="header-form_input" name="#">
-                    <button class="header-form_button">検索</button>
-                </form>
-            </div>
-            <nav class="header-nav">
-                <ul class="header-nav_list">
-                    @if(Auth::check())
+            <button class="menu-toggle" id="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <div class="header-menu-container" id="header-menu-container">
+                <div class="header-form">
+                    <form action="#" class="header-form_form">
+                        <input name="search" type="text" placeholder="なにをお探しですか？" class="header-form_input" name="#">
+                        <button class="header-form_button">検索</button>
+                    </form>
+                </div>
+                <nav class="header-nav">
+                    <ul class="header-nav_list">
+                        @if(Auth::check())
+                            <li>
+                                <form action="/logout" method="POST">
+                                    @csrf
+                                    <button class="header-nav_logout-button" type="submit">ログアウト</button>
+                                </form>
+                            </li>
+                        @else
+                            <li><a href="/login">ログイン</a></li>
+                        @endif
+                        <li><a href="/profile/mypage">マイページ</a></li>
                         <li>
-                            <form action="/logout" method="POST">
+                            <form action="/sell" method="GET">
                                 @csrf
-                                <button class="header-nav_logout-button" type="submit">ログアウト</button>
+                                <button class="header-nav_button" type="submit">出品</button>
                             </form>
                         </li>
-                    @else
-                        <li><a href="/login">ログイン</a></li>
-                    @endif
-                    <li><a href="/profile/mypage">マイページ</a></li>
-                    <li>
-                        <form action="#">
-                            @csrf
-                            <button class="header-nav_button" type="submit">出品</button>
-                        </form>
-                    </li>
-                </ul>
-            </nav>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </header>
     <main>
         @yield('content')
-        @yield('scripts')
-        
     </main>
+
+    @yield('scripts')
+
+    <script>
+        const menuToggle = document.getElementById("menu-toggle");
+        const headerMenuContainer = document.getElementById("header-menu-container");
+
+        menuToggle.addEventListener("click", () => {
+            headerMenuContainer.classList.toggle("is-open");
+            menuToggle.classList.toggle("is-active");
+        });
+    </script>
 
 </body>
 

@@ -26,7 +26,7 @@ Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail
 
 // Item関係
 Route::middleware(["auth", "verified"])->group(function () {
-    Route::get("/items/create", [ItemController::class, "create"]);
+    Route::get("/sell", [ItemController::class, "create"]);
     Route::post("/items", [ItemController::class, "store"]);
     Route::get("/items/{item}/edit", [ItemController::class, "edit"]);
     Route::put("/items/{item}", [ItemController::class, "update"]);

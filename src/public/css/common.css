@@ -2,9 +2,7 @@
 .header {
     background-color: #000;
     height: 80px;
-    /* PC版の固定高さ */
     padding: 0;
-    /* paddingを削除して、header-innerで調整 */
     border-bottom: none;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     position: sticky;
@@ -16,17 +14,14 @@
 .header-inner {
     max-width: 1230px;
     height: 100%;
-    /* 親要素（.header）の高さに合わせる */
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* 縦方向中央揃え */
     padding: 0 20px;
-    /* 左右のpaddingはここで確保 */
+    position: relative;
 }
 
-/* ロゴの調整 */
 .header-logo {
     display: flex;
     align-items: center;
@@ -35,43 +30,46 @@
 
 .header-logo img {
     max-height: 50px;
-    /* PC版でのロゴの最大高さを調整 */
     width: auto;
     vertical-align: middle;
 }
 
-/* フォームの調整 */
+.header-menu-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    max-width: 700px;
+}
+
 .header-form {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-grow: 1;
-    /* 利用可能なスペースを埋める */
-    margin: 0 20px;
-    /* ロゴとナビゲーションとの左右マージン */
-    max-width: 450px;
-    /* PC版でのフォームの最大幅を少し広げる */
+    margin: 0;
+    width: 60%;
+    min-width: 300px;
     height: 100%;
+    flex-shrink: 0;
 }
 
 .header-form_form {
     display: flex;
     width: 100%;
     height: 40px;
-    /* フォームの高さを固定 */
 }
 
 .header-form_input {
     padding: 10px 15px;
     border: 1px solid #555;
     border-radius: 8px 0 0 8px;
-    width: calc(100% - 80px);
-    /* ボタンの幅を考慮して調整 */
+    width: calc(100% - 100px);
     font-size: 1.0em;
     color: #eee;
     background-color: #333;
     height: 100%;
-    /* 親要素の高さに合わせる */
     box-sizing: border-box;
 }
 
@@ -84,45 +82,37 @@
     cursor: pointer;
     font-size: 1.0em;
     transition: background-color 0.2s ease-in-out;
-    width: 80px;
-    /* ボタンの幅を固定 */
+    width: 100px;
     height: 100%;
-    /* 親要素の高さに合わせる */
     box-sizing: border-box;
 }
 
 .header-form_button:hover {
-    background-color: #333;
+    background-color: #555;
 }
 
-/* ナビゲーションの調整 */
 .header-nav {
     display: flex;
     align-items: center;
     height: 100%;
+    flex-shrink: 0;
 }
 
 .header-nav_list {
     display: flex;
     list-style: none;
     padding: 0;
-    margin-left: 40px;
-    /* ロゴ・フォームとの間隔 */
+    margin: 0;
     font-size: 1.1em;
     height: 100%;
     align-items: center;
+    gap: 25px;
 }
 
 .header-nav_list li {
-    margin-left: 25px;
     display: flex;
     align-items: center;
     height: 100%;
-}
-
-.header-nav_list li:first-child {
-    /* 最初のli要素の左マージンを調整 */
-    margin-left: 0;
 }
 
 .header-nav_list li a {
@@ -133,7 +123,7 @@
 }
 
 .header-nav_list li a:hover {
-    color: #555;
+    color: #999;
 }
 
 .header-nav_list li button {
@@ -164,85 +154,148 @@
     background-color: #555;
 }
 
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1000;
+}
 
-/* PC版のスタイルは省略（変更なしと仮定） */
+.menu-toggle .bar {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle.is-active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-toggle.is-active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.is-active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
 
 /* レスポンシブデザインの調整 (768px以下) */
 @media (max-width: 768px) {
 
-    /* ヘッダー全体の高さはmin-contentで制御する方針を維持 */
     .header {
-        height: min-content;
-        padding: 10px 0;
+        height: 60px;
+        padding: 0;
         box-sizing: border-box;
     }
 
     .header-inner {
-        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         align-items: center;
+        height: 100%;
         padding: 0 15px;
-        height: auto;
     }
 
     .header-logo {
-        margin-bottom: 10px;
-        height: auto;
-        width: 100%;
-        text-align: center;
-        display: block;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+        flex-grow: 0;
+        width: auto;
     }
 
     .header-logo img {
         max-height: 40px;
-        display: inline-block;
+        display: block;
+    }
+
+    .menu-toggle {
+        display: flex;
+        position: relative;
+        z-index: 101;
+    }
+
+    .header-menu-container {
+        flex-grow: unset;
+        justify-content: flex-start;
+        gap: 0;
+        max-width: none;
+
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #333;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        box-sizing: border-box;
+        z-index: 99;
+        transform: translateY(-10px);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .header-menu-container.is-open {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
     }
 
     .header-form {
         width: 100%;
-        margin-bottom: 10px;
-        max-width: 400px;
+        margin-bottom: 20px;
+        max-width: none;
         height: auto;
     }
 
     .header-form_form {
-        flex-direction: column;
-        height: auto;
+        flex-direction: row;
+        height: 40px;
         width: 100%;
-        gap: 5px;
-        margin-top: 10px;
+        gap: 0;
     }
 
     .header-form_input {
-        width: 100%;
-        border-radius: 8px;
-        max-width: none;
-        height: 35px;
-        box-sizing: border-box;
-        padding: 8px 10px;
-        font-size: 0.9em;
+        width: calc(100% - 100px);
+        border-radius: 8px 0 0 8px;
+        height: 100%;
+        font-size: 0.95em;
+        padding: 10px 15px;
     }
 
     .header-form_button {
-        width: 100%;
-        border-radius: 8px;
-        height: 35px;
-        box-sizing: border-box;
-        padding: 8px 12px;
-        font-size: 0.9em;
+        width: 100px;
+        border-radius: 0 8px 8px 0;
+        height: 100%;
+        font-size: 0.95em;
+        padding: 10px 20px;
     }
 
     .header-nav {
         width: 100%;
         height: auto;
-        margin-top: 5px;
-        margin-bottom: 5px;
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .header-nav_list {
         flex-direction: column;
         margin-left: 0;
-        align-items: center;
-        /* 各アイテムを中央に */
+        align-items: flex-start;
         height: auto;
         width: 100%;
         gap: 8px;
@@ -251,51 +304,51 @@
 
     .header-nav_list li {
         margin-left: 0;
-        width: auto;
+        width: 100%;
         height: auto;
-        text-align: center;
-        display: flex;
-        /* ここは維持 */
-        justify-content: center;
-        /* ここは維持 */
-        align-items: center;
-        /* ここも維持 */
-    }
-
-    .header-nav_list li a {
+        text-align: left;
         display: block;
-        padding: 5px 10px;
-        box-sizing: border-box;
-        width: auto;
-        color: #FFFFFF;
-        text-decoration: none;
-        transition: color 0.2s ease-in-out;
-        line-height: 1;
-        /* ここを1に！テキストの上下の余白を最小限に */
     }
 
+    .header-nav_list li a,
     .header-nav_list li button {
         display: block;
-        width: auto;
-        padding: 7px 15px;
-        /* ボタンのパディングを微調整 */
+        text-align: left;
+        padding: 10px 15px;
         box-sizing: border-box;
-        border-radius: 2px;
-        cursor: pointer;
-        font-size: 1em;
-        background-color: #000;
+        width: 100%;
         color: #FFFFFF;
-        border: none;
+        text-decoration: none;
         transition: background-color 0.2s ease-in-out;
-        line-height: 1;
-        /* ここも1に！ボタン内のテキストの上下の余白を最小限に */
+        line-height: 1.2;
+        border-radius: 4px;
+    }
+
+    .header-nav_list li a:hover,
+    .header-nav_list li button:hover {
+        background-color: #555;
+        color: #fff;
+    }
+
+    .header-nav_button {
+        background-color: #007bff;
+    }
+
+    .header-nav_button:hover {
+        background-color: #0056b3;
+    }
+
+    .header-nav_logout-button {
+        background-color: #dc3545;
+    }
+
+    .header-nav_logout-button:hover {
+        background-color: #c82333;
     }
 }
 
 /* さらに小さい画面 (480px以下) での調整 */
 @media (max-width: 480px) {
-
-    /* ここは基本的に変更なしで、必要に応じて微調整 */
     .header-logo img {
         max-height: 30px;
     }
@@ -303,14 +356,13 @@
     .header-form_input,
     .header-form_button {
         font-size: 0.8em;
-        padding: 6px 8px;
-        height: 30px;
+        padding: 8px 10px;
+        height: 35px;
     }
 
     .header-nav_list li a,
     .header-nav_list li button {
         font-size: 0.9em;
-        padding: 4px 8px;
-        /* さらに小さく */
+        padding: 8px 12px;
     }
 }

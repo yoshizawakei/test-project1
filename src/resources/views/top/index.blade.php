@@ -29,9 +29,7 @@
 
     <!-- マイリスト -->
     <div id="mylist-content" class="product-grid page-content hidden">
-        <!-- ここにマイリストの商品データを表示するロジックが入ります -->
-        
-        <p>マイリストはまだ登録されていません。</p>
+        <p></p>
     </div>
 @endsection
 

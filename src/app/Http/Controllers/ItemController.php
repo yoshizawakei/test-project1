@@ -31,4 +31,15 @@ class ItemController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        $categories = Category::all();
+        $brands = Brand::all();
+        $colors = Color::all();
+        $statuses = Status::all();
+        return view("items.sell", compact("categories", "brands", "colors", "statuses"));
+    }
+
+
+
 }
