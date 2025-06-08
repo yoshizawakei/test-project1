@@ -7,8 +7,6 @@ use App\Models\Item;
 use App\Models\User;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Color;
-use App\Models\Status;
 use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
@@ -24,11 +22,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
         ]);
+        $this->call([
+            CategoriesTableSeeder::class,
+        ]);
 
         Brand::factory(10)->create();
-        Category::factory(10)->create();
-        Color::factory(10)->create();
-        Status::factory(10)->create();
 
         $this->call([
             ItemsTableSeeder::class,

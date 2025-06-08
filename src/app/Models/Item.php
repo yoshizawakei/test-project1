@@ -18,8 +18,6 @@ class Item extends Model
         'user_id',
         'category_id',
         'brand_id',
-        'status_id',
-        'color_id',
         'sold_at',
         'buyer_id',
     ];
@@ -42,24 +40,12 @@ class Item extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    // Statusesテーブルとの紐付け
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
-
-    // Colorsテーブルとの紐付け
-    public function color()
-    {
-        return $this->belongsTo(Color::class);
-    }
-
     // buyerとの紐付け
     public function buyer()
     {
         return $this->belongsTo(User::class, 'buyer_id');
     }
-    
+
     // コメントとの紐付け
     public function comments()
     {

@@ -22,9 +22,7 @@ class CreateItemsTable extends Migration
             $table->string("condition");
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->foreignId('brand_id')->constrained()->onDelete('cascade');
-            $table->foreignId('status_id')->constrained()->onDelete('cascade');
-            $table->foreignId("color_id")->constrained("colors")->onDelete("cascade");
+            $table->foreignId('brand_id')->nullable();
             $table->timestamps();
             $table->timestamp("sold_at")->nullable();
             $table->foreignId("buyer_id")->nullable()->constrained("users")->onDelete("cascade");

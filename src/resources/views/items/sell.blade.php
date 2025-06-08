@@ -5,86 +5,74 @@
 @endsection
 
 @section("content")
-<div class="main-content">
-<h2 class="page-title">商品の出品</h2>
+    <div class="main-content">
+    <h2 class="page-title">商品の出品</h2>
 
-<form class="product-form">
-    <section class="form-section">
-        <h3 class="section-title">商品画像</h3>
-        <div class="image-upload-area">
-            <input type="file" id="product-image-upload" accept="image/*" multiple style="display: none;">
-            <label for="product-image-upload" class="upload-label">
-                <span class="upload-text">画像を選択する</span>
-                <p class="drag-drop-text">または画像をドラッグ＆ドロップ</p>
-            </label>
-            <div id="image-preview" class="image-preview">
+    <form class="product-form">
+        <section class="form-section">
+            <h3 class="label-title">商品画像</h3>
+            <div class="image-upload-area">
+                <input type="file" id="product-image-upload" accept="image/*" multiple style="display: none;">
+                <label for="product-image-upload" class="upload-label">
+                    <span class="upload-text">画像を選択する</span>
+                    <p class="drag-drop-text">または画像をドラッグ＆ドロップ</p>
+                </label>
+                <div id="image-preview" class="image-preview">
+                    </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3 class="section-title">商品の詳細</h3>
+            <div class="form-item">
+                <label for="category" class="label-title">カテゴリー</label>
+                <div class="category-buttons">
+                    @foreach ($categories as $category)
+                        <button type="button" class="category-button">{{ $category->name }}</button>
+                    @endforeach
                 </div>
-        </div>
-    </section>
-
-    <section class="form-section">
-        <h3 class="section-title">商品の詳細</h3>
-        <div class="form-item">
-            <label for="category" class="label-title">カテゴリー</label>
-            <div class="category-buttons">
-                <button type="button" class="category-button">ファッション</button>
-                <button type="button" class="category-button">家電</button>
-                <button type="button" class="category-button selected">インテリア</button>
-                <button type="button" class="category-button">レディース</button>
-                <button type="button" class="category-button">メンズ</button>
-                <button type="button" class="category-button">コスメ</button>
-                <button type="button" class="category-button">本</button>
-                <button type="button" class="category-button">ゲーム</button>
-                <button type="button" class="category-button">スポーツ</button>
-                <button type="button" class="category-button">ポケモン</button>
-                <button type="button" class="category-button">ハンドメイド</button>
-                <button type="button" class="category-button">アクセサリー</button>
-                <button type="button" class="category-button">おもちゃ</button>
-                <button type="button" class="category-button">ベビー・キッズ</button>
             </div>
-        </div>
-        <div class="form-item">
-            <label for="product-status" class="label-title">商品の状態</label>
-            <div class="select-wrapper">
-                <select id="product-status" name="product_status">
-                    <option value="">選択してください</option>
-                    <option value="new">新品、未使用</option>
-                    <option value="used_good">目立った傷や汚れなし</option>
-                    <option value="used_fair">やや傷や汚れあり</option>
-                </select>
+            <div class="form-item">
+                <label for="product-status" class="label-title">商品の状態</label>
+                <div class="select-wrapper">
+                    <select id="product-status" name="product_status">
+                        <option value="">選択してください</option>
+                        <option value="new">良好</option>
+                        <option value="used_good">目立った傷や汚れなし</option>
+                        <option value="used_fair">やや傷や汚れあり</option>
+                        <option value="used_bad">状態が悪い</option>
+                    </select>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="form-section">
-        <h3 class="section-title">商品名と説明</h3>
-        <div class="form-item">
-            <label for="product-name" class="label-title">商品名</label>
-            <input type="text" id="product-name" name="product_name" placeholder="商品名を入力してください">
-        </div>
-        <div class="form-item">
-            <label for="brand-name" class="label-title">ブランド名</label>
-            <input type="text" id="brand-name" name="brand_name" placeholder="ブランド名を入力してください（任意）">
-        </div>
-        <div class="form-item">
-            <label for="product-description" class="label-title">商品の説明</label>
-            <textarea id="product-description" name="product_description" rows="5" placeholder="商品の説明を入力してください"></textarea>
-        </div>
-    </section>
+        <section class="form-section">
+            <h3 class="section-title">商品名と説明</h3>
+            <div class="form-item">
+                <label for="product-name" class="label-title">商品名</label>
+                <input type="text" id="product-name" name="product_name" placeholder="商品名を入力してください">
+            </div>
+            <div class="form-item">
+                <label for="brand-name" class="label-title">ブランド名</label>
+                <input type="text" id="brand-name" name="brand_name" placeholder="ブランド名を入力してください（任意）">
+            </div>
+            <div class="form-item">
+                <label for="product-description" class="label-title">商品の説明</label>
+                <textarea id="product-description" name="product_description" rows="5" placeholder="商品の説明を入力してください"></textarea>
+            </div>
+            <div class="form-item">
+                <label for="product-description" class="label-title">販売価格</label>
+                <div class="form-item price-input">
+                    <input type="number" id="selling-price" name="selling_price" placeholder="¥" min="0">
+                </div>
+            </div>
+        </section>
 
-    <section class="form-section">
-        <h3 class="section-title">販売価格</h3>
-        <div class="form-item price-input">
-            <label for="selling-price" class="label-title">¥</label>
-            <input type="number" id="selling-price" name="selling_price" placeholder="0" min="0">
+        <div class="submit-button-container">
+            <button type="submit" class="submit-button">出品する</button>
         </div>
-    </section>
-
-    <div class="submit-button-container">
-        <button type="submit" class="submit-button">出品する</button>
+    </form>
     </div>
-</form>
-</div>
 @endsection
 
 @section("scripts")

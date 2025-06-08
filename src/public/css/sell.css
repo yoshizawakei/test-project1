@@ -1,9 +1,9 @@
 
 .main-content {
-    max-width: 700px;
-    margin: 30px auto;
+    max-width: 680px;
+    margin: 20px auto;
     background-color: #fff;
-    padding: 40px;
+    padding: 20px;
 }
 
 .page-title {
@@ -18,21 +18,20 @@
 .form-section {
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px dashed #eee;
 }
 
 .form-section:last-of-type {
     border-bottom: none;
-    /* 最後のセクションの下線はなし */
     margin-bottom: 0;
 }
 
 .section-title {
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     margin-bottom: 20px;
     color: #555;
     position: relative;
+    border-bottom: 1px solid #5F5F5F;
 }
 
 .form-item {
@@ -41,9 +40,9 @@
 
 .label-title {
     display: block;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
-    margin-bottom: 8px;
+    margin-bottom: 15px;
     color: #444;
 }
 
@@ -51,8 +50,7 @@
 input[type="text"],
 input[type="number"],
 textarea {
-    width: calc(100% - 24px);
-    /* パディングを考慮 */
+    width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -62,6 +60,7 @@ textarea {
 }
 
 input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
     /* Firefoxのスピナー非表示 */
 }
@@ -84,7 +83,7 @@ input:focus,
 textarea:focus,
 select:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #FF3333;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
@@ -175,7 +174,7 @@ select:focus {
     border-color: #FF5565;
 }
 
-/* ドロップダウン（商品の状態） */
+/* 商品の状態 */
 .select-wrapper {
     position: relative;
     display: inline-block;
@@ -189,7 +188,6 @@ select:focus {
     border-radius: 4px;
     background-color: #fff;
     -webkit-appearance: none;
-    /* デフォルトの矢印を非表示 */
     -moz-appearance: none;
     appearance: none;
     cursor: pointer;
@@ -199,17 +197,14 @@ select:focus {
 
 .select-wrapper::after {
     content: '▼';
-    /* カスタム矢印 */
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
     color: #888;
     pointer-events: none;
-    /* 矢印をクリックしてもセレクトボックスが反応しないように */
 }
 
-/* 販売価格入力 */
 .price-input {
     display: flex;
     align-items: center;
@@ -218,38 +213,30 @@ select:focus {
 .price-input .label-title {
     margin-right: 10px;
     margin-bottom: 0;
-    /* ラベルのデフォルトマージンをリセット */
     font-size: 20px;
-    /* ¥マークを大きく */
     color: #333;
 }
 
 .price-input input[type="number"] {
     flex-grow: 1;
-    /* 残りのスペースを埋める */
     width: auto;
-    /* widthを自動調整 */
 }
 
 /* 出品ボタン */
 .submit-button-container {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .submit-button {
     background-color: #FF5555;
-    /* オレンジ系の色 */
     color: #fff;
-    padding: 15px 40px;
+    padding: 10px 30px;
     border-radius: 5px;
     font-size: 18px;
     font-weight: bold;
     transition: background-color 0.3s ease;
-    width: 100%;
-    /* 親要素の幅いっぱいに */
-    max-width: 300px;
-    /* 最大幅を設定 */
+    max-width: 680px;
     box-sizing: border-box;
     border: none;
     width: 100%;

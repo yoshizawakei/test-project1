@@ -17,7 +17,7 @@
             {{ __('メール認証を完了してください。') }}
         </p>
         <div class="main-button_div">
-            <a href="#" class="main-button">
+            <a href="https://mailtrap.io/inboxes/3734605/messages" class="main-button">
                 {{ __('認証はこちらから') }}
             </a>
         </div>

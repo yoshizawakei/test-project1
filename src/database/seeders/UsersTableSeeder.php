@@ -17,9 +17,10 @@ class UsersTableSeeder extends Seeder
         DB::table("users")->insert([
             [
                 "name" => "山田太郎",
-                "email" => "kei.yszwa.2525@gmail.com",
+                "email" => "test@example",
                 "email_verified_at" => null,
                 "password" => bcrypt("password"),
+                "profile_configured" => false,
                 "remember_token" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
