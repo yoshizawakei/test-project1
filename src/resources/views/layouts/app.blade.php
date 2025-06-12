@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset("css/sanitize.css") }}">
-    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset("css/layouts/sanitize.css") }}">
+    <link rel="stylesheet" href="{{ asset('css/layouts/common.css') }}">
     @yield('css')
     <title>COACHTECH</title>
 </head>
@@ -41,7 +41,7 @@
                         @else
                             <li><a href="/login">ログイン</a></li>
                         @endif
-                        <li><a href="/profile/mypage">マイページ</a></li>
+                        <li><a href="/mypage/index">マイページ</a></li>
                         <li>
                             <form action="/sell" method="GET">
                                 @csrf

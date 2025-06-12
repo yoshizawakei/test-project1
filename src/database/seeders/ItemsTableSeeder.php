@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Item;
 
 class ItemsTableSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class ItemsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table("items")->insert([
+        $itemsData = [
             [
                 "item_name" => "腕時計",
                 "price" => 15000,
@@ -22,14 +23,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Armani+Mens+Clock.jpg",
                 "condition" => "良好",
                 "user_id" => 1,
-                "category_id" => 1,
                 "brand_id" => 1,
-                "status_id" => 1,
-                "color_id" => 1,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [1, 2],
             ],
             [
                 "item_name" => "HDD",
@@ -38,14 +37,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/HDD+Hard+Disk.jpg",
                 "condition" => "目立った傷や汚れなし",
                 "user_id" => 1,
-                "category_id" => 2,
                 "brand_id" => 2,
-                "status_id" => 2,
-                "color_id" => 2,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [3],
             ],
             [
                 "item_name" => "玉ねぎ3束",
@@ -54,14 +51,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/iLoveIMG+d.jpg",
                 "condition" => "やや傷や汚れあり",
                 "user_id" => 1,
-                "category_id" => 3,
                 "brand_id" => 3,
-                "status_id" => 3,
-                "color_id" => 3,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [4, 10],
             ],
             [
                 "item_name" => "革靴",
@@ -70,14 +65,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Leather+Shoes+Product+Photo.jpg",
                 "condition" => "状態が悪い",
                 "user_id" => 1,
-                "category_id" => 4,
                 "brand_id" => 4,
-                "status_id" => 4,
-                "color_id" => 4,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [5, 6],
             ],
             [
                 "item_name" => "ノートPC",
@@ -86,14 +79,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Living+Room+Laptop.jpg",
                 "condition" => "良好",
                 "user_id" => 1,
-                "category_id" => 5,
                 "brand_id" => 5,
-                "status_id" => 5,
-                "color_id" => 5,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [4, 8],
             ],
             [
                 "item_name" => "マイク",
@@ -102,14 +93,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Music+Mic+4632231.jpg",
                 "condition" => "目立った傷や汚れなし",
                 "user_id" => 1,
-                "category_id" => 6,
                 "brand_id" => 6,
-                "status_id" => 6,
-                "color_id" => 6,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [6, 7, 10],
             ],
             [
                 "item_name" => "ショルダーバッグ",
@@ -118,14 +107,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Purse+fashion+pocket.jpg",
                 "condition" => "やや傷や汚れあり",
                 "user_id" => 1,
-                "category_id" => 7,
                 "brand_id" => 7,
-                "status_id" => 7,
-                "color_id" => 7,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [1, 2, 5],
             ],
             [
                 "item_name" => "タンブラー",
@@ -134,14 +121,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Tumbler+souvenir.jpg",
                 "condition" => "状態が悪い",
                 "user_id" => 1,
-                "category_id" => 8,
                 "brand_id" => 8,
-                "status_id" => 8,
-                "color_id" => 8,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [9],
             ],
             [
                 "item_name" => "コーヒーミル",
@@ -150,14 +135,12 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Waitress+with+Coffee+Grinder.jpg",
                 "condition" => "良好",
                 "user_id" => 1,
-                "category_id" => 9,
                 "brand_id" => 9,
-                "status_id" => 9,
-                "color_id" => 9,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [10],
             ],
             [
                 "item_name" => "メイクセット",
@@ -166,16 +149,23 @@ class ItemsTableSeeder extends Seeder
                 "image_path" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/%E5%A4%96%E5%87%BA%E3%83%A1%E3%82%A4%E3%82%AF%E3%82%A2%E3%83%83%E3%83%95%E3%82%9A%E3%82%BB%E3%83%83%E3%83%88.jpg",
                 "condition" => "目立った傷や汚れなし",
                 "user_id" => 1,
-                "category_id" => 10,
                 "brand_id" => 10,
-                "status_id" => 10,
-                "color_id" => 10,
                 "sold_at" => null,
                 "buyer_id" => null,
                 "created_at" => now(),
                 "updated_at" => now(),
+                "category_ids" => [6, 8],
             ],
             // Add more items as needed
-        ]);
+        ];
+
+        foreach ($itemsData as $data) {
+            $categoryIds = $data['category_ids'];
+            unset($data['category_ids']);
+
+            $item = Item::create($data);
+
+            $item->categories()->attach($categoryIds);
+        }
     }
 }

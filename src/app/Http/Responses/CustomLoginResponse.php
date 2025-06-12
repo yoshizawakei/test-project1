@@ -36,7 +36,7 @@ class CustomLoginResponse implements LoginResponseContract
             $user->save();
 
             // プロファイル設定ページへリダイレクト
-            return redirect()->route('profile.mypage');
+            return redirect()->route('mypage.profile')->with('success', 'プロフィールを設定してください。');
         }
         // ユーザーがメールアドレスの確認を必要としない場合、または既に確認済みの場合、
         return redirect()->intended(Fortify::redirects('login'));

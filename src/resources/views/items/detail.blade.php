@@ -1,13 +1,14 @@
 @extends('layouts.app')
 
 @section("css")
-<link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+<link rel="stylesheet" href="{{ asset('css/items/detail.css') }}">
 @endsection
 
 @section('content')
     <div class="container">
         <div class="product-image">
-            <img src="{{ $item["image_path"] }}" alt="商品画像">
+            <img src="{{ asset($item->image_path) }}" alt="商品画像">
+
         </div>
         <div class="product-details">
             <h1 class="product-title">{{ $item["item_name"] }}</h1>
@@ -37,17 +38,23 @@
 
             <div class="product-description">
                 <h2>商品説明</h2>
-                <ul>
-                    <li>カラー：<span class="detail-value">{{ $item->color->name }}</span></li>
-                    <li>状態：<span class="detail-value">{{ $item->status->name }}</span></li>
-                    <li>詳細：<span class="detail-value">{{ $item["description"] }}</span></li>
-                </ul>
+                <div class="detail-value">
+                    {{ $item["description"] }}
+                </div>
             </div>
 
             <div class="product-info">
                 <h2>商品の情報</h2>
                 <ul>
-                    <li>カテゴリー：<span class="detail-value">{{ $item->category->name }}</span>, <span class="detail-value">{{ $item->category->name }}</span></li>
+                    <li>カテゴリー：
+                        <span class="detail-value">
+                            @forelse ($item->categories as $category)
+                                {{ $category->name }}{{ !$loop->last ? ' , ' : '' }}
+                            @empty
+                                カテゴリーなし
+                            @endforelse
+                        </span>
+                    </li>
                     <li>商品の状態：<span class="detail-value">{{ $item["condition"] }}</span></li>
                 </ul>
             </div>

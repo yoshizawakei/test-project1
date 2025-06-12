@@ -21,7 +21,7 @@ use App\Mail\TestMail;
 */
 
 // トップページ関係
-Route::get("/", [ItemController::class, "index"]);
+Route::get("/", [ItemController::class, "index"])->name("top.index");
 Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail');
 
 // Item関係
@@ -33,8 +33,11 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::delete("/items/{item}", [ItemController::class, "destroy"]);
 });
 
+// mypage関係
+
+
 // Profile関係
-Route::get("/profile/mypage", [ProfileController::class, "index"])->name("profile.mypage");
+Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
 Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
 
 

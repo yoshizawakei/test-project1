@@ -7,22 +7,23 @@ use App\Models\Item;
 use App\Models\User;
 use App\Models\Brand;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
     public function index()
     {
-        $items = Item::with(['user', 'category', 'brand'])->inRandomOrder()->get();
+        $items = Item::with(['user', 'categories', 'brand'])->inRandomOrder()->get();
         return view("top.index", compact("items"));
     }
 
     public function show(Item $item)
     {
-        $item = Item::with(['user', 'category', 'brand'])->findOrFail($item->id);
+        $item = Item::with(['user', 'categories', 'brand'])->findOrFail($item->id);
         return view("items.detail", [
             "item" => $item,
             "user" => $item->user,
-            "category" => $item->category,
             "brand" => $item->brand,
         ]);
     }
@@ -33,7 +34,93 @@ class ItemController extends Controller
         $brands = Brand::all();
         return view("items.sell", compact("categories", "brands"));
     }
-    
+
+    public function store(Request $request)
+    {
+        $imagePath = null;
+        if ($request->hasFile("image")) {
+            $imagePath = $request->file("image")->store("public/items");
+            $imagePath = str_replace("public/", "storage/", $imagePath);
+        }
+
+        $userId = Auth::id();
+
+        $item = Item::create([
+            "item_name" => $request->item_name,
+            "price" => $request->price,
+            "description" => $request->description,
+            "image_path" => $imagePath,
+            "condition" => $request->condition,
+            "user_id" => $userId,
+            "brand_id" => $request->brand_id,
+            // "sold_at" => null,
+            // "buyer_id" => null,
+        ]);
+
+        $item->categories()->sync($request->category_ids);
+
+        return redirect()->route("top.index")->with("success", "商品を出品しました。");
+    }
+
+    public function edit(Item $item)
+    {
+        if (Auth::id() !== $item->user_id) {
+            abort(403, "Unauthorized action.");
+        }
+
+        $categories = Category::all();
+        $brands = Brand::all();
+
+        $item->load("categories");
+
+        return view("items.edit", compact("item", "categories", "brands"));
+    }
+
+    public function update(Request $request, Item $item)
+    {
+        if (Auth::id() !== $item->user_id) {
+            abort(403, "Unauthorized action.");
+        }
+
+        $imagePath = $item->image_path;
+
+        if ($request->hasFile("image")) {
+            if ($item->image_path) {
+                Storage::delete(str_replace("storage/", "public/", $item->image_path));
+            }
+            $imagePath = $request->file("image")->store("public/items");
+            $imagePath = str_replace("public/", "storage/", $imagePath);
+        }
+
+        $item->update([
+            "item_name" => $request->item_name,
+            "price" => $request->price,
+            "description" => $request->description,
+            "image_path" => $imagePath,
+            "condition" => $request->condition,
+            "brand_id" => $request->brand_id,
+        ]);
+
+        $item->categories()->sync($request->category_ids);
+
+        return redirect()->route("items.detail",$item)->with("success", "商品情報を更新しました。");
+    }
+
+    public function destroy(Item $item)
+    {
+        if (Auth::id() !== $item->user_id) {
+            abort(403, "Unauthorized action.");
+        }
+
+        if ($item->image_path) {
+            Storage::delete(str_replace("storage/", "public/", $item->image_path));
+        }
+
+        $item->delete();
+
+        return redirect()->route("top.index")->with("success", "商品を削除しました。");
+    }
+
 
 
 

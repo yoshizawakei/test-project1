@@ -21,7 +21,6 @@ class CreateItemsTable extends Migration
             $table->string('image_path');
             $table->string("condition");
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->nullable();
             $table->timestamps();
             $table->timestamp("sold_at")->nullable();

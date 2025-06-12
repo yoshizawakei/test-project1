@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Item extends Model
 {
@@ -16,7 +17,6 @@ class Item extends Model
         'image_path',
         'condition',
         'user_id',
-        'category_id',
         'brand_id',
         'sold_at',
         'buyer_id',
@@ -27,11 +27,12 @@ class Item extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     // Categoriesテーブルとの紐付け
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'category_item', 'item_id', 'category_id')
+                    ->withTimestamps();
     }
 
     // Brandsテーブルとの紐付け

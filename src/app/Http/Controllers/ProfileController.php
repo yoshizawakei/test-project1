@@ -56,7 +56,7 @@ class ProfileController extends Controller
         $user->forceFill(["profile_configured" => true])->save();
 
         // プロフィール設定後、マイページにリダイレクト
-        return redirect()->route("profile.mypage")->with("success", "プロフィールが更新されました。")->withInput([
+        return redirect()->route("top.index")->with("success", "プロフィールが更新されました。")->withInput([
             'username' => $profile->username,
             'postal_code' => $profile->postal_code,
             'address' => $profile->address,
