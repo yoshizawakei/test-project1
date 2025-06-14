@@ -18,7 +18,7 @@
         <a href="{{ route("items.detail", $item->id) }}" class="product-item-link">
             <div class="product-item">
                 <div class="product-image">
-                    <img src='{{ asset("$item->image_path") }}' alt="商品画像">
+                    <img src='{{ asset("$item->image_path") }}' alt="{{ $item->item_name }}">
                 </div>
                 <div class="product-name">{{ $item->item_name }}</div>
                 <div class="product-price">¥{{ number_format($item->price) }}</div>
@@ -29,7 +29,7 @@
 
     <!-- マイリスト -->
     <div id="mylist-content" class="product-grid page-content hidden">
-        <p></p>
+        <p class="no-items-message">お気に入りした商品を読み込み中...</p>
     </div>
 @endsection
 
@@ -64,7 +64,9 @@
 
     async function loadMylistItems() {
         const mylistContent = document.getElementById('mylist-content');
-        mylistContent.innerHTML = '<p>マイリストを読み込み中...</p>';
+        if (mylistContent.innerHTML.trim() !== '<p class="no-items-message">お気に入りした商品を読み込み中...</p>') {
+            mylistContent.innerHTML = '<p>マイリストを再読み込み中...</p>';
+        }
 
     try {
             const response = await fetch("/api/mylist", {

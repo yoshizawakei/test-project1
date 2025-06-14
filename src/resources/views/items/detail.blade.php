@@ -63,21 +63,30 @@
                 <h2>コメント({{ $item->comments->count() }})</h2>
                 <div class="comments-list">
                     @forelse ($item->comments->sortByDesc("created_at") as $comment)
-                    <div class="comment">
-                        <p class="comment-author">
-                            {{ $comment->user->name }}
-                            <small class="text-muted">{{ $comment->created_at->format("Y/m/d H:i") }}</small>
-                        </p>
-                        <p class="comment-text">{{ $comment->comment }}</p>
-                        @if (Auth::id() === $comment->user_id)
-                        <form action="{{ route("comments.destroy", $comment) }}" method="post" onsubmit="return confirm('本当にこのコメントを削除しますか？');" class="delete-comment-form">
-                            @csrf
-                            @method("DELETE")
-                            <button class="btn btn-danger btn-sm">削除</button>
-                        </form>
-                        @endif
-                    </div>
-                @empty
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    @if ($comment->user->profile && $comment->user->profile->profile_image)
+                                        <img src="{{ asset('storage/' . $comment->user->profile->profile_image) }}" alt="{{ $comment->user->profile->username ?? $comment->user->name }}のプロフィール画像">
+                                    @else
+                                        <img src="{{ asset('img/logo.svg') }}" alt="デフォルトプロフィール画像">
+                                    @endif
+                                </div>
+                                <p class="comment-author">
+                                    {{ $comment->user->profile->username ?? $comment->user->name }}
+                                    <small class="text-muted">{{ $comment->created_at->format("Y/m/d H:i") }}</small>
+                                </p>
+                            </div>
+                            <p class="comment-text">{{ $comment->comment }}</p>
+                            @if (Auth::id() === $comment->user_id)
+                            <form action="{{ route("comments.destroy", $comment) }}" method="post" onsubmit="return confirm('本当にこのコメントを削除しますか？');" class="delete-comment-form">
+                                @csrf
+                                @method("DELETE")
+                                <button class="btn btn-danger btn-sm">削除</button>
+                            </form>
+                            @endif
+                        </div>
+                    @empty
                     <p>まだコメントがありません。</p>
                 @endforelse
             </div>

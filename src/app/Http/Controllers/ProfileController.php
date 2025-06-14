@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Routing\ControllerDispatcher;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -15,16 +16,10 @@ class ProfileController extends Controller
         // ユーザーがログインしているかどうかチェック
         if (auth()->check()) {
             $user = auth()->user();
-            $profile = Profile::where('user_id', $user->id)->first();
+            $profile = $user->profile()->firstOrCreate([]);
 
             // プロフィールが存在する場合はその情報を取得し、存在しない場合は空の値を設定
-            return view('profile.mypage', [
-                'username' => $profile ? $profile->username : '',
-                'postal_code' => $profile ? $profile->postal_code : '',
-                'address' => $profile ? $profile->address : '',
-                'building_name' => $profile ? $profile->building_name : '',
-                'profile_image' => $profile && $profile->profile_image ? Storage::url($profile->profile_image) : null,
-            ]);
+            return view('mypage.profile', compact("profile"));
         }
         // ログインしていない場合は、ログイン画面にリダイレクト
         return redirect()->route('login');
@@ -56,12 +51,7 @@ class ProfileController extends Controller
         $user->forceFill(["profile_configured" => true])->save();
 
         // プロフィール設定後、マイページにリダイレクト
-        return redirect()->route("top.index")->with("success", "プロフィールが更新されました。")->withInput([
-            'username' => $profile->username,
-            'postal_code' => $profile->postal_code,
-            'address' => $profile->address,
-            'building_name' => $profile->building_name,
-        ]);
+        return redirect()->route("mypage.index")->with("success", "プロフィールが更新されました。");
 
     }
 }

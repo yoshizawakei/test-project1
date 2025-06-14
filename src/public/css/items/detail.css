@@ -109,7 +109,7 @@
 }
 
 .comment-icon img {
-    font-size: 1.2em;
+    /* font-sizeはimgタグには適用されないため削除 */
     height: 20px;
     width: 20px;
 }
@@ -129,6 +129,7 @@
     background-color: #c8401d;
 }
 
+/* 商品説明、商品情報、コメントセクションの共通スタイル */
 .product-description,
 .product-info,
 .comments-section {
@@ -171,29 +172,74 @@
     margin-top: 15px;
 }
 
+/* 個々のコメント */
 .comment {
-    border: 1px solid #e44d26;
-    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    /* #e44d26 から #eee に修正しました (一般的な薄い色へ)。元のデザイン意図に合わせて変更してください。 */
     border-radius: 5px;
-    background-color: #f9f9f9;
+    padding: 15px;
     margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     position: relative;
+    /* 削除ボタンの配置のために必要 */
 }
 
-.comment-author {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
+/* --- コメントプロフィール画像表示のための追加スタイル (ここから) --- */
+
+/* コメントヘッダー（アバターと著者情報） */
+.comment-header {
     display: flex;
     align-items: center;
+    /* 垂直方向中央揃え */
+    margin-bottom: 10px;
+    gap: 10px;
+    /* アバターと著者情報の間隔 */
+}
+
+/* コメントのプロフィール画像コンテナ */
+.comment-avatar {
+    width: 40px;
+    /* アバターのサイズ */
+    height: 40px;
+    border-radius: 50%;
+    /* 丸くする */
+    overflow: hidden;
+    /* はみ出しを隠す */
+    flex-shrink: 0;
+    /* 縮小させない */
+    border: 1px solid #ddd;
+    /* 枠線 */
+}
+
+.comment-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 画像を中央にトリミングして表示 */
+}
+
+/* コメント著者名と日付 */
+.comment-author {
+    font-weight: bold;
+    color: #555;
+    margin: 0;
+    /* デフォルトマージンをリセット */
+    flex-grow: 1;
+    /* 残りのスペースを占める */
 }
 
 .comment-author small {
+    display: block;
+    /* 日付を新しい行に表示 */
     font-weight: normal;
-    color: #999;
-    margin-left: 10px;
-    font-size: 0.85em;
+    color: #888;
+    font-size: 0.8em;
 }
+
+/* --- コメントプロフィール画像表示のための追加スタイル (ここまで) --- */
+
+
 .comment-text {
     color: #333;
     margin-bottom: 0;
@@ -248,10 +294,8 @@
 .alert-info {
     padding: 12px;
     background-color: #e0f2f7;
-    /* infoカラーを少し調整 */
     border: 1px solid #b3e0ed;
     color: #0d6efd;
-    /* Bootstrapのprimaryカラーに合わせて文字色を調整 */
     border-radius: 5px;
     margin-bottom: 20px;
     font-size: 0.95em;

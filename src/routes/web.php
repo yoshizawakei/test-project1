@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MylistController;
+use App\Http\Controllers\MypageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\TestMail;
@@ -34,12 +35,15 @@ Route::middleware(["auth", "verified"])->group(function () {
 });
 
 // mypage関係
+Route::middleware("auth")->group(function () {
+    Route::get("/mypage", [MypageController::class, "index"])->name("mypage.index");
+    Route::get("/api/purchased-items", [MypageController::class, "getPurchasedItems"])->name("mypage.purchased_items");
+    
+    // Profile関係
+    Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
+    Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
 
-
-// Profile関係
-Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
-Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
-
+});
 
 // Comment関係
 Route::middleware("auth")->group(function () {

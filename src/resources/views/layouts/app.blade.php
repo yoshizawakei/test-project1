@@ -41,7 +41,7 @@
                         @else
                             <li><a href="/login">ログイン</a></li>
                         @endif
-                        <li><a href="/mypage/index">マイページ</a></li>
+                        <li><a href="/mypage">マイページ</a></li>
                         <li>
                             <form action="/sell" method="GET">
                                 @csrf
