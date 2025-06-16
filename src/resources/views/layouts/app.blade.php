@@ -57,17 +57,21 @@
         @yield('content')
     </main>
 
-    @yield('scripts')
-
     <script>
-        const menuToggle = document.getElementById("menu-toggle");
-        const headerMenuContainer = document.getElementById("header-menu-container");
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.getElementById("menu-toggle");
+            const headerMenuContainer = document.getElementById("header-menu-container");
 
-        menuToggle.addEventListener("click", () => {
-            headerMenuContainer.classList.toggle("is-open");
-            menuToggle.classList.toggle("is-active");
+            if (menuToggle && headerMenuContainer) {
+                menuToggle.addEventListener("click", () => {
+                    headerMenuContainer.classList.toggle("is-open");
+                    menuToggle.classList.toggle("is-active");
+                });
+            }
         });
     </script>
+
+    @yield('scripts')
 
 </body>
 

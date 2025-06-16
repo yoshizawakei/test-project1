@@ -70,10 +70,16 @@ class ItemController extends Controller
 
         $categories = Category::all();
         $brands = Brand::all();
+        $conditions = [
+            "良好",
+            "目立った傷や汚れなし",
+            "やや傷や汚れあり",
+            "状態が悪い",
+        ];
 
         $item->load("categories");
 
-        return view("items.edit", compact("item", "categories", "brands"));
+        return view("items.edit", compact("item", "categories", "brands", "conditions"));
     }
 
     public function update(Request $request, Item $item)
@@ -121,7 +127,13 @@ class ItemController extends Controller
         return redirect()->route("top.index")->with("success", "商品を削除しました。");
     }
 
-
-
+    public function purchase(Item $item)
+    {
+        if (Auth::id() === $item->user_id) {
+            abort(403, "You cannot purchase your own item.");
+        }
+        
+        return view("items.purchase", compact("item"));
+    }
 
 }

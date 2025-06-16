@@ -15,10 +15,22 @@ class ProfileController extends Controller
     {
         // ユーザーがログインしているかどうかチェック
         if (auth()->check()) {
+            if (!auth()->user()->profile_configured) {
+                // プロフィールが未設定の場合は、プロフィール設定画面を表示
+                return view("mypage.profile");
+            }
             $user = auth()->user();
-            $profile = $user->profile()->firstOrCreate([]);
+            $profile = $user->profile()->firstOrCreate(
+                [],
+                [
+                "username" => $user->name,
+                "postal_code" => " ",
+                "address" => " ",
+                "building_name" => null,
+                "profile_image" => null,
+            ]);
 
-            // プロフィールが存在する場合はその情報を取得し、存在しない場合は空の値を設定
+            // プロフィールが存在する場合はその情報を取得
             return view('mypage.profile', compact("profile"));
         }
         // ログインしていない場合は、ログイン画面にリダイレクト

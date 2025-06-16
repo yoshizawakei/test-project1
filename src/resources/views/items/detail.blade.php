@@ -12,7 +12,7 @@
         </div>
         <div class="product-details">
             <h1 class="product-title">{{ $item["item_name"] }}</h1>
-            <p class="brand-name">ブランド名：{{ $item->brand->name }}</p>
+            <p class="brand-name">ブランド名：{{ $item->brand->name ?? "N/A" }}</p>
             <div class="price-info">
                 <span class="price">¥{{ number_format($item["price"]) }}</span> <span class="tax">(税込)</span>
             </div>
@@ -34,7 +34,15 @@
                     <span class="comment-count">{{ $item->comments->count() }}</span>
                 </div>
             </div>
-            <button class="purchase-button">購入手続きへ</button>
+            @if (Auth::check() && Auth::id() === $item->user_id)
+                <a href="{{ route("items.edit", $item->id) }}" class="edit-item-button">商品を編集する</a>
+            @else
+                @if (!$item->sold_at)
+                    <a href="{{ route("items.purchase", $item->id) }}" class="purchase-button">購入手続きへ</a>
+                @else
+                    <p class="sold-out-message">SOLD OUT</p>
+                @endif
+            @endif
 
             <div class="product-description">
                 <h2>商品説明</h2>

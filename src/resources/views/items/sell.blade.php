@@ -126,94 +126,94 @@
 @endsection
 
 @section("scripts")
-<script>
-    // 画像アップロードのJavaScript（簡易版）
-    const imageUploadInput = document.getElementById('product-image-upload');
-    const uploadLabel = document.querySelector('.upload-label');
-    const imagePreview = document.getElementById('image-preview');
-    const uploadText = document.querySelector('.upload-text');
-    const dragDropText = document.querySelector('.drag-drop-text');
+    <script>
+        // 画像アップロードのJavaScript（簡易版）
+        const imageUploadInput = document.getElementById('product-image-upload');
+        const uploadLabel = document.querySelector('.upload-label');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadText = document.querySelector('.upload-text');
+        const dragDropText = document.querySelector('.drag-drop-text');
 
-    // ドラッグ＆ドロップ処理
-    uploadLabel.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadLabel.classList.add('drag-over');
-    });
-
-    uploadLabel.addEventListener('dragleave', () => {
-        uploadLabel.classList.remove('drag-over');
-    });
-
-    uploadLabel.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadLabel.classList.remove('drag-over');
-        handleFiles(e.dataTransfer.files);
-    });
-
-    // ファイル選択ダイアログからの処理
-    imageUploadInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-    });
-
-    function handleFiles(files) {
-        imagePreview.innerHTML = ''; // 既存のプレビューをクリア
-
-        if (files.length === 0) {
-            if (uploadText && dragDropText) {
-                uploadText.style.display = 'block';
-                dragDropText.style.display = 'block';
-            }
-            return;
-        }
-
-        // アップロードテキストとドラッグ＆ドロップテキストを非表示にする
-        if (uploadText && dragDropText) {
-            uploadText.style.display = 'none';
-            dragDropText.style.display = 'none';
-        }
-
-        const file = files[0];
-        if (!file.type.startsWith('image/')) {
-            alert('画像ファイルを選択してください。');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.classList.add('preview-image');
-            imagePreview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // カテゴリボタンの複数選択
-    const categoryButtonsContainer = document.getElementById('category-buttons-container');
-    const categoryButtons = categoryButtonsContainer.querySelectorAll('.category-button');
-    const hiddenCategoryInputs = categoryButtonsContainer.querySelectorAll('.category-hidden-input');
-
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const categoryId = button.dataset.categoryId;
-            const correspondingHiddenInput = document.querySelector(`.category-hidden-input[data-category-id="${categoryId}"]`);
-
-            if (button.classList.contains('selected')) {
-                // 既に選択されている場合、選択解除
-                button.classList.remove('selected');
-                correspondingHiddenInput.disabled = true; // 無効にして送信対象から外す
-            } else {
-                // 選択されていない場合、選択
-                button.classList.add('selected');
-                correspondingHiddenInput.disabled = false; // 有効にして送信対象にする
-            }
+        // ドラッグ＆ドロップ処理
+        uploadLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.add('drag-over');
         });
-    });
+
+        uploadLabel.addEventListener('dragleave', () => {
+            uploadLabel.classList.remove('drag-over');
+        });
+
+        uploadLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // ファイル選択ダイアログからの処理
+        imageUploadInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            imagePreview.innerHTML = ''; // 既存のプレビューをクリア
+
+            if (files.length === 0) {
+                if (uploadText && dragDropText) {
+                    uploadText.style.display = 'block';
+                    dragDropText.style.display = 'block';
+                }
+                return;
+            }
+
+            // アップロードテキストとドラッグ＆ドロップテキストを非表示にする
+            // if (uploadText && dragDropText) {
+            //     uploadText.style.display = 'none';
+            //     dragDropText.style.display = 'none';
+            // }
+
+            const file = files[0];
+            if (!file.type.startsWith('image/')) {
+                alert('画像ファイルを選択してください。');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-image');
+                imagePreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // カテゴリボタンの複数選択
+        const categoryButtonsContainer = document.getElementById('category-buttons-container');
+        const categoryButtons = categoryButtonsContainer.querySelectorAll('.category-button');
+        const hiddenCategoryInputs = categoryButtonsContainer.querySelectorAll('.category-hidden-input');
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const categoryId = button.dataset.categoryId;
+                const correspondingHiddenInput = document.querySelector(`.category-hidden-input[data-category-id="${categoryId}"]`);
+
+                if (button.classList.contains('selected')) {
+                    // 既に選択されている場合、選択解除
+                    button.classList.remove('selected');
+                    correspondingHiddenInput.disabled = true; // 無効にして送信対象から外す
+                } else {
+                    // 選択されていない場合、選択
+                    button.classList.add('selected');
+                    correspondingHiddenInput.disabled = false; // 有効にして送信対象にする
+                }
+            });
+        });
 
 
-    const productStatusSelect = document.getElementById('product-status');
-    if (productStatusSelect.value) {
-        productStatusSelect.value = "{{ old('condition') }}";
-    }
-</script>
+        const productStatusSelect = document.getElementById('product-status');
+        if (productStatusSelect.value) {
+            productStatusSelect.value = "{{ old('condition') }}";
+        }
+    </script>
 @endsection

@@ -29,16 +29,17 @@ Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail
 Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/sell", [ItemController::class, "create"]);
     Route::post("/items", [ItemController::class, "store"]);
-    Route::get("/items/{item}/edit", [ItemController::class, "edit"]);
-    Route::put("/items/{item}", [ItemController::class, "update"]);
+    Route::get("/items/{item}/edit", [ItemController::class, "edit"])->name("items.edit");
+    Route::put("/items/{item}", [ItemController::class, "update"])->name("items.update");
     Route::delete("/items/{item}", [ItemController::class, "destroy"]);
+    Route::get("/items/{item}/purchase", [ItemController::class, "purchase"])->name("items.purchase");
 });
 
 // mypage関係
 Route::middleware("auth")->group(function () {
     Route::get("/mypage", [MypageController::class, "index"])->name("mypage.index");
     Route::get("/api/purchased-items", [MypageController::class, "getPurchasedItems"])->name("mypage.purchased_items");
-    
+
     // Profile関係
     Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
     Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
