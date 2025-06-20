@@ -7,7 +7,7 @@
 @section('content')
     <div class="profile-container">
         <h2 class="profile-title">プロフィール設定</h2>
-        <form action="{{ route("profile.edit") }}" method="POST" class="profile-form" enctype="multipart/form-data">
+        <form action="{{ route("profile.edit") }}" method="POST" class="profile-form" enctype="multipart/form-data" novalidate>
             @csrf
             <div class="profile-image-section">
                 <label for="profile_image_upload" class="profile-image-placeholder">

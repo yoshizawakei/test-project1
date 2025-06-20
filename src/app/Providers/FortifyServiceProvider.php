@@ -17,6 +17,8 @@ use App\Http\Responses\CustomRegisterResponse;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use App\Http\Responses\CustomLoginResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {

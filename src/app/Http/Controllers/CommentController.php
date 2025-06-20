@@ -7,10 +7,11 @@ use App\Models\Comment;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CommentRequest;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Item $item)
+    public function store(CommentRequest $request, Item $item)
     {
         $comment = new Comment();
         $comment->item_id = $item->id;

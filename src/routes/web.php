@@ -43,7 +43,8 @@ Route::middleware("auth")->group(function () {
     // Profile関係
     Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
     Route::post("profile/edit", [ProfileController::class, "edit"])->name("profile.edit");
-
+    Route::get("profile/address-edit", [ProfileController::class, "addressEdit"])->name("profile.address.edit");
+    Route::put("profile/address-update", [ProfileController::class, "addressUpdate"])->name("profile.address.update");
 });
 
 // Comment関係

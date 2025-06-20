@@ -1,6 +1,8 @@
 <?php
 
 use App\Providers\RouteServiceProvider;
+use Laravel\Fortify\Http\Requests\LoginRequest as DefaultLoginRequest;
+use Laravel\Fortify\Http\Requests\RegisterRequest as DefaultRegisterRequest;
 use Laravel\Fortify\Features;
 
 return [
@@ -157,4 +159,22 @@ return [
         ]),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    Fortify Requests
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the request classes that Fortify will use for
+    | validating the incoming requests. You can customize these classes
+    | to add additional validation rules or modify the existing ones.
+    |--------------------------------------------------------------------------
+    */
+    'requests' => [
+        'login' => \App\Http\Requests\LoginRequest::class,
+        'register' => \App\Http\Requests\RegisterRequest::class,
+        // 'resetPassword' => \App\Http\Requests\ResetPasswordRequest::class,
+        // 'updateProfileInformation' => \App\Http\Requests\UpdateProfileInformationRequest::class,
+        // 'updatePassword' => \App\Http\Requests\UpdatePasswordRequest::class,
+        // 'twoFactorAuthentication' => \App\Http\Requests\TwoFactorAuthenticationRequest::class,
+    ],
 ];

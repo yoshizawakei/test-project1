@@ -1,0 +1,92 @@
+.edit-address-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.alert.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.alert.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* 個別のエラーメッセージのスタイル */
+.alert.alert-danger ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.alert.alert-danger li {
+    margin-bottom: 5px;
+}
+
+
+.address-form .form-group {
+    margin-bottom: 25px;
+}
+
+.address-form .form-label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.address-form .form-input {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.address-form .form-input::placeholder {
+    color: #bbb;
+}
+
+.address-form .form-error {
+    color: #e3342f;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #FF5555;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #FF5565;
+}

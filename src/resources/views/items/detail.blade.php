@@ -102,7 +102,7 @@
             <div class="add-comment-section">
                 <h2>商品へのコメント</h2>
                 @auth
-                    <form action="{{ route("comments.store", $item) }}" method="post">
+                    <form action="{{ route("comments.store", $item) }}" method="post" novalidate>
                         @csrf
                         <div class="form-group">
                             <textarea name="comment" class="form-control" rows="3" placeholder="コメントを入力してください">{{ old("comment") }}</textarea>

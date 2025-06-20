@@ -7,7 +7,7 @@
 @section("content")
     <div class="login-container">
         <h2 class="login-title">ログイン</h2>
-        <form method="post" action="/login" class="login-form">
+        <form method="post" action="/login" class="login-form" novalidate>
             @csrf
             <div class="form-group">
                 <label for="email" class="form-label">メールアドレス</label>

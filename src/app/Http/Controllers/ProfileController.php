@@ -9,6 +9,7 @@ use Illuminate\Routing\ControllerDispatcher;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
+
 class ProfileController extends Controller
 {
     public function index()
@@ -65,5 +66,42 @@ class ProfileController extends Controller
         // プロフィール設定後、マイページにリダイレクト
         return redirect()->route("mypage.index")->with("success", "プロフィールが更新されました。");
 
+    }
+
+    public function addressEdit(Request $request)
+    {
+        $user = auth::user();
+        $profile = $user->profile;
+
+        if(!$profile) {
+            // プロフィールが存在しない場合はプロフィール設定画面にリダイレクト
+            return redirect()->route("mypage.profile")->with("error", "プロフィールが設定されていません。");
+        }
+
+        $item_id = $request->query('item_id');
+
+        return view("mypage.edit_address", compact("profile", "item_id"));
+    }
+
+    public function addressUpdate(Request $request)
+    {
+        $user = auth()->user();
+
+        $postalCodeCleaned = str_replace('-', '', $request->input('postal_code'));
+
+        Profile::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'postal_code' => $postalCodeCleaned,
+                'address' => $request->input('address'),
+                'building_name' => $request->input('building_name'),
+            ]
+        );
+
+        if ($request->has('item_id') && $request->item_id) {
+            return redirect()->route('items.purchase', ['item' => $request->item_id])->with('success', '住所情報が更新されました。');
+        }
+
+        return redirect()->route('mypage')->with("success", "住所情報が更新されました。");
     }
 }

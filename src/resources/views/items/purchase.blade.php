@@ -13,7 +13,7 @@
                         <img src="{{ asset($item->image_path) }}" alt="{{ $item['item_name'] }}"
                             class="product-image-thumbnail">
                     @else
-                        <img src="#" alt="画像なし" class="product-image-thumbnail">
+                        <img src="{{ asset("images/no-image.png") }}" alt="画像なし" class="product-image-thumbnail">
                     @endif
                 </div>
                 <div class="product-details">
@@ -38,10 +38,11 @@
             <div class="delivery-address-section">
                 <div class="delivery-address-header">
                     <h3 class="section-title">配送先</h3>
-                    <a href="#" class="change-address-link">変更する</a>
+                    <a href="{{ route("profile.address.edit", ["item_id" => $item->id]) }}" class="change-address-link">変更する</a>
                 </div>
                 @if (Auth::user() && Auth::user()->profile)
-                    <p class="address-postal-code">〒 {{ Auth::user()->profile->postal_code }}</p>
+                    <p class="address-postal-code">〒
+                        {{ substr(Auth::user()->profile->postal_code, 0, 3) }}-{{ substr(Auth::user()->profile->postal_code, 3) }}</p>
                     <p class="address-details">{{ Auth::user()->profile->address }}</p>
                     <p class="address-details">{{ Auth::user()->profile->building_name }}</p>
                 @else
@@ -71,22 +72,26 @@
     </div>
 @endsection
 
-@section('script')
+@section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const paymentSelect = document.getElementById('payment-method-select');
             const paymentSummaryValue = document.getElementById('selected-payment-method-summary');
 
             if (paymentSelect) {
-                paymentSelect.addEventListener('change', function () {
-                    paymentSummaryValue.textContent = this.options[this.selectedIndex].textContent;
-                });
-
-                if (paymentSelect.options.length > 0 && paymentSelect.selectedIndex !== -1) {
-                    paymentSummaryValue.textContent = paymentSelect.options[paymentSelect.selectedIndex].textContent;
-                } else {
+                if (paymentSelect.value === "") { // "選択してください" が選択されている場合
                     paymentSummaryValue.textContent = '選択されていません';
+                } else {
+                    paymentSummaryValue.textContent = paymentSelect.options[paymentSelect.selectedIndex].textContent;
                 }
+
+                paymentSelect.addEventListener('change', function () {
+                    if (this.value === "") { // "選択してください" が選択された場合
+                        paymentSummaryValue.textContent = '選択されていません';
+                    } else {
+                        paymentSummaryValue.textContent = this.options[this.selectedIndex].textContent;
+                    }
+                });
             } else {
                 console.error("payment-method-select が見つかりません。");
             }

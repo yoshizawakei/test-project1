@@ -7,7 +7,7 @@
 @section('content')
     <div class="register-container">
         <h2 class="register-title">会員登録</h2>
-        <form method="post" action="/register" class="register-form">
+        <form method="post" action="/register" class="register-form" novalidate>
             @csrf
             <div class="form-group">
                 <label for="name" class="form-label">ユーザー名</label>
@@ -43,6 +43,11 @@
             <div class="form-group">
                 <label for="password-confirm" class="form-label">確認用パスワード</label>
                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" autocomplete="new-password">
+                @error('password_confirmation')
+                    <span class="error-message" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
 
             <button type="submit" class="btn-primary">

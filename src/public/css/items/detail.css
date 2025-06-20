@@ -180,57 +180,40 @@
 .comment {
     background-color: #fff;
     border: 1px solid #eee;
-    /* #e44d26 から #eee に修正しました (一般的な薄い色へ)。元のデザイン意図に合わせて変更してください。 */
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     position: relative;
-    /* 削除ボタンの配置のために必要 */
 }
 
-/* --- コメントプロフィール画像表示のための追加スタイル (ここから) --- */
-
-/* コメントヘッダー（アバターと著者情報） */
 .comment-header {
     display: flex;
     align-items: center;
-    /* 垂直方向中央揃え */
     margin-bottom: 10px;
     gap: 10px;
-    /* アバターと著者情報の間隔 */
 }
 
-/* コメントのプロフィール画像コンテナ */
 .comment-avatar {
     width: 40px;
-    /* アバターのサイズ */
     height: 40px;
     border-radius: 50%;
-    /* 丸くする */
     overflow: hidden;
-    /* はみ出しを隠す */
     flex-shrink: 0;
-    /* 縮小させない */
     border: 1px solid #ddd;
-    /* 枠線 */
 }
 
 .comment-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* 画像を中央にトリミングして表示 */
 }
 
-/* コメント著者名と日付 */
 .comment-author {
     font-weight: bold;
     color: #555;
     margin: 0;
-    /* デフォルトマージンをリセット */
     flex-grow: 1;
-    /* 残りのスペースを占める */
 }
 
 .comment-author small {
@@ -240,9 +223,6 @@
     color: #888;
     font-size: 0.8em;
 }
-
-/* --- コメントプロフィール画像表示のための追加スタイル (ここまで) --- */
-
 
 .comment-text {
     color: #333;
@@ -272,7 +252,6 @@
 
 .add-comment-section textarea {
     width: 100%;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -314,7 +293,9 @@
 .invalid-feedback {
     color: #dc3545;
     font-size: 0.85em;
+    font-weight: bold;
     margin-top: 5px;
+    margin-bottom: 15px;
 }
 
 .add-comment-section textarea.is-invalid {

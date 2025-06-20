@@ -15,9 +15,11 @@ class MypageController extends Controller
 
         if (!$user) {
             return redirect()->route("login")->with("error", "ログインしてください。");
+        } elseif (!$user->profile_configured) {
+            return redirect()->route("mypage.profile")->with("success", "プロフィールを設定してください。");
         }
 
-        $exhibitedItems = Item::whereNull("buyer_id")->get();
+        $exhibitedItems = Item::where("user_id", $user->id)->get();
 
         return view("mypage.index", compact("exhibitedItems"));
     }
@@ -28,11 +30,11 @@ class MypageController extends Controller
 
         if (!$user) {
             return response()->json(["error" => "ログインしてください。"], 401);
+        } elseif (!$user->profile_configured) {
+            return response()->json(["error" => "プロフィールを設定してください。"], 403);
         }
 
-        $purchasedItems = Item::where("buyer_id", $user->id)
-            ->whereNotNull("buyer_id")
-            ->get();
+        $purchasedItems = Item::where("buyer_id", $user->id)->get();
 
         return response()->json($purchasedItems);
     }
