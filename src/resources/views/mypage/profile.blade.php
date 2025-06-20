@@ -21,26 +21,51 @@
                 <button type="button" class="profile-image-edit-button" onclick="document.getElementById('profile_image_upload').click()">
                     画像を編集する
                 </button>
+                @error('profile_image')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
                 <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ Auth::user()->profile->username ?? '' }}">
+                @error('username')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ Auth::user()->profile->postal_code ?? '' }}">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ Auth::user()->profile->postal_code ? substr_replace(Auth::user()->profile->postal_code, '-', 3, 0) : '' }}">
+                @error('postal_code')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="address" class="form-label">住所</label>
                 <input type="text" id="address" name="address" class="form-input" placeholder="例: 東京都渋谷区" value="{{ Auth::user()->profile->address ?? '' }}">
+                @error('address')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="building_name" class="form-label">建物名</label>
                 <input type="text" id="building_name" name="building_name" class="form-input"
                     placeholder="例: 〇〇マンション101号室" value="{{ Auth::user()->profile->building_name ?? '' }}">
+                @error('building_name')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="form-submit-area">

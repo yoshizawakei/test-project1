@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ExhibitionRequest;
 
 class ItemController extends Controller
 {
@@ -35,7 +36,7 @@ class ItemController extends Controller
         return view("items.sell", compact("categories", "brands"));
     }
 
-    public function store(Request $request)
+    public function store(ExhibitionRequest $request)
     {
         $imagePath = null;
         if ($request->hasFile("image")) {

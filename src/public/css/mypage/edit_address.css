@@ -69,9 +69,10 @@
 }
 
 .address-form .form-error {
-    color: #e3342f;
+    color: #FF5555;
     font-size: 14px;
     margin-top: 5px;
+    font-weight: bold;
 }
 
 .submit-button {

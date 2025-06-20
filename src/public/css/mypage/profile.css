@@ -111,3 +111,11 @@
 .update-button:hover {
     background-color: #dc2626;
 }
+
+
+.error-message {
+    color: #FF5555;
+    font-weight: bold;
+    margin: 10px 0;
+}
+

@@ -8,6 +8,8 @@ use App\Models\Profile;
 use Illuminate\Routing\ControllerDispatcher;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AddressRequest;
+use App\Http\Requests\ProfileRequest;
 
 
 class ProfileController extends Controller
@@ -38,28 +40,25 @@ class ProfileController extends Controller
         return redirect()->route('login');
     }
 
-    public function edit(Request $request)
+    public function edit(ProfileRequest $profilerequest, AddressRequest $addressRequest)
     {
         $user = auth()->user();
 
-        $profile = Profile::updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'username' => $request->input('username'),
-                'postal_code' => $request->input('postal_code'),
-                'address' => $request->input('address'),
-                'building_name' => $request->input('building_name'),
-            ]
-        );
+        $profile = Profile::firstOrCreate(["user_id" => $user->id]);
+        $profile->username = $addressRequest->input("username");
+        $profile->postal_code = str_replace('-', '', $addressRequest->input("postal_code"));
+        $profile->address = $addressRequest->input("address");
+        $profile->building_name = $addressRequest->input("building_name");
 
-        if ($request->hasFile("profile_image")) {
+        if ($profilerequest->hasFile("profile_image")) {
             if ($profile->profile_image) {
                 Storage::disk('public')->delete($profile->profile_image);
             }
-            $path = $request->file("profile_image")->store("profile_images", "public");
+            $path = $profilerequest->file("profile_image")->store("profile_images", "public");
             $profile->profile_image = $path;
-            $profile->save();
         }
+
+        $profile->save();
 
         $user->forceFill(["profile_configured" => true])->save();
 
@@ -83,7 +82,7 @@ class ProfileController extends Controller
         return view("mypage.edit_address", compact("profile", "item_id"));
     }
 
-    public function addressUpdate(Request $request)
+    public function addressUpdate(AddressRequest $request)
     {
         $user = auth()->user();
 
@@ -92,6 +91,7 @@ class ProfileController extends Controller
         Profile::updateOrCreate(
             ['user_id' => $user->id],
             [
+                'username' => $request->input('username'),
                 'postal_code' => $postalCodeCleaned,
                 'address' => $request->input('address'),
                 'building_name' => $request->input('building_name'),

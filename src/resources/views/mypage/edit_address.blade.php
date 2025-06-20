@@ -8,22 +8,6 @@
     <div class="edit-address-container">
         <h2 class="page-title">住所の変更</h2>
 
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <form action="{{ route('profile.address.update') }}" method="POST" class="address-form">
             @csrf
             @method('PUT')
@@ -31,6 +15,8 @@
             @if (isset($item_id))
                 <input type="hidden" name="item_id" value="{{ $item_id }}">
             @endif
+
+            <input type="hidden" id="username" name="username" class="form-input" value="{{ old('username', $profile->username ?? '') }}">
 
             {{-- 郵便番号 --}}
             <div class="form-group">

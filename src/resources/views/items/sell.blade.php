@@ -12,17 +12,7 @@
             {{ session("success") }}
         </div>
     @endif
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="/items" method="post" enctype="multipart/form-data" class="product-form">
+    <form action="/items" method="post" enctype="multipart/form-data" class="product-form" novalidate>
         @csrf
         <section class="form-section">
             <h3 class="label-title">商品画像</h3>

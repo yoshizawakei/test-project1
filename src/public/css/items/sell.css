@@ -243,5 +243,12 @@ select:focus {
 }
 
 .submit-button:hover {
-    background-color: #FF3333;
+    background-color: #FF5565;
+}
+
+.error-message {
+    color: #FF5555;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
 }
