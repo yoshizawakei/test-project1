@@ -186,6 +186,12 @@
     background-color: #FF5565;
 }
 
+.error-message {
+    color: #FF5555;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;

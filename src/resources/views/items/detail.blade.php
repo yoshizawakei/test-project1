@@ -8,7 +8,9 @@
     <div class="container">
         <div class="product-image">
             <img src="{{ asset($item->image_path) }}" alt="商品画像">
-
+            @if ($item->sold_at)
+                <div class="sold-out-overlay">SOLD</div>
+            @endif
         </div>
         <div class="product-details">
             <h1 class="product-title">{{ $item["item_name"] }}</h1>
@@ -35,7 +37,11 @@
                 </div>
             </div>
             @if (Auth::check() && Auth::id() === $item->user_id)
-                <a href="{{ route("items.edit", $item->id) }}" class="edit-item-button">商品を編集する</a>
+                @if ($item->sold_at)
+                    <p class="sold-out-message">この商品は売却済みです。</p>
+                @else
+                    <a href="{{ route("items.edit", $item->id) }}" class="edit-item-button">商品を編集する</a>
+                @endif
             @else
                 @if (!$item->sold_at)
                     <a href="{{ route("items.purchase", $item->id) }}" class="purchase-button">購入手続きへ</a>

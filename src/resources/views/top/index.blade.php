@@ -15,15 +15,23 @@
     <!-- おすすめ商品 -->
     <div id="recommend-content" class="product-grid page-content active-content">
         @foreach ($items as $item)
-        <a href="{{ route("items.detail", $item->id) }}" class="product-item-link">
-            <div class="product-item">
-                <div class="product-image">
-                    <img src='{{ asset("$item->image_path") }}' alt="{{ $item->item_name }}">
+            @if (Auth::check() && Auth::user()->user_id === $item->user_id)
+                @continue
+            @endif
+            <a href="{{ route("items.detail", $item->id) }}" class="product-item-link">
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src='{{ asset("$item->image_path") }}' alt="{{ $item->item_name }}">
+                        @if ($item->sold_at)
+                            <div class="sold-out-overlay">
+                                SOLD
+                            </div>
+                        @endif
+                    </div>
+                    <div class="product-name">{{ $item->item_name }}</div>
+                    <div class="product-price">¥{{ number_format($item->price) }}</div>
                 </div>
-                <div class="product-name">{{ $item->item_name }}</div>
-                <div class="product-price">¥{{ number_format($item->price) }}</div>
-            </div>
-        </a>
+            </a>
         @endforeach
     </div>
 
@@ -98,6 +106,7 @@
                             <div class="product-item">
                                 <div class="product-image">
                                     <img src="${item.image_path}" alt="${item.item_name}">
+                                    ${item.sold_at ? '<div class="sold-out-overlay">SOLD</div>' : ''}
                                 </div>
                                 <div class="product-name">${item.item_name}</div>
                                 <div class="product-price">¥${numberWithCommas(item.price)}</div>

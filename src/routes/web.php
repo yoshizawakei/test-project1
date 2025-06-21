@@ -35,7 +35,10 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/items/{item}/edit", [ItemController::class, "edit"])->name("items.edit");
     Route::put("/items/{item}", [ItemController::class, "update"])->name("items.update");
     Route::delete("/items/{item}", [ItemController::class, "destroy"]);
+
     Route::get("/items/{item}/purchase", [ItemController::class, "purchase"])->name("items.purchase");
+
+    Route::post("/items/{item}/purchase", [ItemController::class, "completePurchase"])->name("items.completePurchase");
 });
 
 // mypage関係
@@ -66,12 +69,12 @@ Route::middleware("auth")->group(function () {
 Route::middleware("auth")->get("/api/mylist", [MylistController::class, "index"]);
 
 // Payment関係
-Route::middleware("auth")->group(function () {
-    Route::get("/items/{item}/purchase", [PaymentController::class, "checkout"])->name("items.checkout");
-    Route::get("/purchase/success", [PaymentController::class, "success"])->name("purchase.success");
-    Route::get("/purchase/cancel", [PaymentController::class, "cancel"])->name("purchase.cancel");
-});
-Route::post("/stripe/webhook", [WebhookController::class, "handleWebhook"])->name("webhook.handle");
+// Route::middleware("auth")->group(function () {
+//     Route::get("/items/{item}/purchase", [PaymentController::class, "checkout"])->name("items.checkout");
+//     Route::get("/purchase/success", [PaymentController::class, "success"])->name("purchase.success");
+//     Route::get("/purchase/cancel", [PaymentController::class, "cancel"])->name("purchase.cancel");
+// });
+// Route::post("/stripe/webhook", [WebhookController::class, "handleWebhook"])->name("webhook.handle");
 
 // メールテスト
 Route::get("/send-test-mail", function () {

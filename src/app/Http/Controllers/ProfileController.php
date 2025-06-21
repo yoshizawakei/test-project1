@@ -17,30 +17,28 @@ class ProfileController extends Controller
     public function index()
     {
         // ユーザーがログインしているかどうかチェック
-        if (auth()->check()) {
-            if (!auth()->user()->profile_configured) {
-                // プロフィールが未設定の場合は、プロフィール設定画面を表示
-                return view("mypage.profile");
-            }
-            $user = auth()->user();
-            $profile = $user->profile()->firstOrCreate(
-                [],
-                [
-                "username" => $user->name,
-                "postal_code" => " ",
-                "address" => " ",
+        if (!auth()->check()) {
+            return redirect()->route('login'); // ログインしていない場合はログイン画面にリダイレクト
+        }
+
+        $user = auth()->user();
+
+        $profile = $user->profile()->firstOrCreate(
+            [],
+            [
+                "username" => $user->name ?? '',
+                "postal_code" => "",
+                "address" => "",
                 "building_name" => null,
                 "profile_image" => null,
-            ]);
+            ]
+        );
 
-            // プロフィールが存在する場合はその情報を取得
-            return view('mypage.profile', compact("profile"));
-        }
-        // ログインしていない場合は、ログイン画面にリダイレクト
-        return redirect()->route('login');
+        // プロフィールをビューに渡す
+        return view('mypage.profile', compact("profile"));
     }
 
-    public function edit(ProfileRequest $profilerequest, AddressRequest $addressRequest)
+    public function edit(ProfileRequest $profileRequest, AddressRequest $addressRequest)
     {
         $user = auth()->user();
 
@@ -50,11 +48,11 @@ class ProfileController extends Controller
         $profile->address = $addressRequest->input("address");
         $profile->building_name = $addressRequest->input("building_name");
 
-        if ($profilerequest->hasFile("profile_image")) {
+        if ($profileRequest->hasFile("profile_image")) {
             if ($profile->profile_image) {
                 Storage::disk('public')->delete($profile->profile_image);
             }
-            $path = $profilerequest->file("profile_image")->store("profile_images", "public");
+            $path = $profileRequest->file("profile_image")->store("profile_images", "public");
             $profile->profile_image = $path;
         }
 

@@ -10,6 +10,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ExhibitionRequest;
+use App\Http\Requests\PurchaseRequest;
 
 class ItemController extends Controller
 {
@@ -131,10 +132,29 @@ class ItemController extends Controller
     public function purchase(Item $item)
     {
         if (Auth::id() === $item->user_id) {
-            abort(403, "You cannot purchase your own item.");
+            abort(403, "自分の商品は購入できません。");
         }
-        
+        if ($item->sold_at !== null) {
+            return redirect()->route("items.detail", $item)->with("error", "この商品はすでに購入されています。");
+        }
         return view("items.purchase", compact("item"));
     }
+
+    public function completePurchase(PurchaseRequest $request, Item $item)
+    {
+        if (Auth::id() === $item->user_id) {
+            abort(403, "自分の商品は購入できません。");
+        }
+        if ($item->sold_at !== null) {
+            return redirect()->route("items.detail", $item)->with("error", "この商品はすでに購入されています。");
+        }
+        $item->update([
+            "sold_at" => now(),
+            "buyer_id" => Auth::id(),
+        ]);
+        return view("items.thanks");
+    }
+
+
 
 }

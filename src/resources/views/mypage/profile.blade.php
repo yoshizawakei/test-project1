@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ Auth::user()->profile->postal_code ? substr_replace(Auth::user()->profile->postal_code, '-', 3, 0) : '' }}">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ Auth::user()->profile->postal_code ?? '' }}">
                 @error('postal_code')
                     <div class="error-message">
                         {{ $message }}
