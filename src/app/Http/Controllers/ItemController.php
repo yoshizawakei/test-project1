@@ -14,9 +14,28 @@ use App\Http\Requests\PurchaseRequest;
 
 class ItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $items = Item::with(['user', 'categories', 'brand'])->inRandomOrder()->get();
+        $itemsQuery = Item::with(['user', 'categories', 'brand']);
+
+        if (Auth::check()) {
+            $itemsQuery->where('user_id', '!=', Auth::id());
+        }
+
+        // 検索機能
+        $searchQuery = $request->input("search");
+
+        if ($searchQuery) {
+            $itemsQuery->where(function ($q) use ($searchQuery) {
+                $q->where("item_name", "like", "%{$searchQuery}%")
+                    ->orWhere("description", "like", "%{$searchQuery}%");
+            });
+        } else {
+            $itemsQuery->inRandomOrder();
+        }
+
+        $items = $itemsQuery->get();
+
         return view("top.index", compact("items"));
     }
 

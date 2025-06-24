@@ -24,8 +24,9 @@
             </button>
             <div class="header-menu-container" id="header-menu-container">
                 <div class="header-form">
-                    <form action="#" class="header-form_form">
-                        <input name="search" type="text" placeholder="なにをお探しですか？" class="header-form_input" name="#">
+                    <form action="{{ route("top.index") }}" method="get" class="header-form_form">
+                        @csrf
+                        <input name="search" type="text" placeholder="なにをお探しですか？" class="header-form_input">
                         <button class="header-form_button">検索</button>
                     </form>
                 </div>
