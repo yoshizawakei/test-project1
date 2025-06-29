@@ -12,7 +12,7 @@
             <div class="profile-image-section">
                 <label for="profile_image_upload" class="profile-image-placeholder">
                     @if (Auth::check() && Auth::user()->profile && Auth::user()->profile->profile_image)
-                        <img id="currentProfileImage" src="{{ asset("storage/" . Auth::user()->profile->profile_image) }}" alt="プロフィール画像">
+                        <img id="currentProfileImage" src="{{ asset("storage/" . $profile->profile_image) }}" alt="プロフィール画像">
                     @else
                         <img id="currentProfileImage" src="{{ asset('img/logo.svg') }}" alt="デフォルトプロフィール画像">
                     @endif
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
-                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ Auth::user()->profile->username ?? '' }}">
+                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ $profile->username ?? '' }}">
                 @error('username')
                     <div class="error-message">
                         {{ $message }}
@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ Auth::user()->profile->postal_code ?? '' }}">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ $profile->postal_code ?? '' }}">
                 @error('postal_code')
                     <div class="error-message">
                         {{ $message }}
@@ -49,7 +49,7 @@
 
             <div class="form-group">
                 <label for="address" class="form-label">住所</label>
-                <input type="text" id="address" name="address" class="form-input" placeholder="例: 東京都渋谷区" value="{{ Auth::user()->profile->address ?? '' }}">
+                <input type="text" id="address" name="address" class="form-input" placeholder="例: 東京都渋谷区" value="{{ $profile->address ?? '' }}">
                 @error('address')
                     <div class="error-message">
                         {{ $message }}
@@ -60,7 +60,7 @@
             <div class="form-group">
                 <label for="building_name" class="form-label">建物名</label>
                 <input type="text" id="building_name" name="building_name" class="form-input"
-                    placeholder="例: 〇〇マンション101号室" value="{{ Auth::user()->profile->building_name ?? '' }}">
+                    placeholder="例: 〇〇マンション101号室" value="{{ $profile->building_name ?? '' }}">
                 @error('building_name')
                     <div class="error-message">
                         {{ $message }}

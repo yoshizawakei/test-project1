@@ -12,7 +12,7 @@
                     @if (Auth::check() && Auth::user()->profile && Auth::user()->profile->profile_image)
                         <img src="{{ asset("storage/" . Auth::user()->profile->profile_image) }}" alt="プロフィール画像">
                     @else
-                        <!-- デフォルト画像 -->
+                        <img src="{{ asset('img/logo.svg') }}" alt="デフォルトプロフィール画像">
                     @endif
                 </div>
                 <h2 class="profile__name">

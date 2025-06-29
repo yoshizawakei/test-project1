@@ -100,6 +100,6 @@ class ProfileController extends Controller
             return redirect()->route('items.purchase', ['item' => $request->item_id])->with('success', '住所情報が更新されました。');
         }
 
-        return redirect()->route('mypage')->with("success", "住所情報が更新されました。");
+        return redirect()->route('mypage.index')->with("success", "住所情報が更新されました。");
     }
 }

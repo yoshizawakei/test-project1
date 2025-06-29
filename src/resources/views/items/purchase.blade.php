@@ -48,8 +48,7 @@
                         <a href="{{ route("profile.address.edit", ["item_id" => $item->id]) }}" class="change-address-link">変更する</a>
                     </div>
                     @if (Auth::user() && Auth::user()->profile)
-                        <p class="address-postal-code">〒
-                            {{ substr(Auth::user()->profile->postal_code, 0, 3) }}-{{ substr(Auth::user()->profile->postal_code, 3) }}</p>
+                        <p class="address-postal-code">〒{{ substr(Auth::user()->profile->postal_code, 0, 3) }}-{{ substr(Auth::user()->profile->postal_code, 3) }}</p>
                         <p class="address-details">{{ Auth::user()->profile->address }}</p>
                         <p class="address-details">{{ Auth::user()->profile->building_name }}</p>
                         <input type="hidden" name="user_profile_exists" value="1">

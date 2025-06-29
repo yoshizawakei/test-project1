@@ -16,6 +16,11 @@ services:
     volumes:
       - ./src:/var/www/
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - mysql
+      - chromedriver
+    env_file:
+      - src/.env.testing
 
   mysql:
     image: mysql:8.0.26
@@ -43,3 +48,11 @@ services:
       - mysql
     ports:
       - 8080:80
+
+  chromedriver:
+    image: selenium/standalone-chrome:latest
+    platform: linux/amd64
+    ports:
+      - "4444:4444"
+    volumes:
+      - /dev/shm:/dev/shm
