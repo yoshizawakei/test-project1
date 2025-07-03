@@ -30,8 +30,8 @@ Route::get('/items/{item}', [ItemController::class, 'show'])->name('items.detail
 
 // Item関係
 Route::middleware(["auth", "verified"])->group(function () {
-    Route::get("/sell", [ItemController::class, "create"]);
-    Route::post("/items", [ItemController::class, "store"]);
+    Route::get("/sell", [ItemController::class, "create"])->name("items.create");
+    Route::post("/items", [ItemController::class, "store"])->name("items.store");
     Route::get("/items/{item}/edit", [ItemController::class, "edit"])->name("items.edit");
     Route::put("/items/{item}", [ItemController::class, "update"])->name("items.update");
     Route::delete("/items/{item}", [ItemController::class, "destroy"]);

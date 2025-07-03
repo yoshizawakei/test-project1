@@ -79,14 +79,21 @@
 
 @section("scripts")
     <script>
-        document.getElementById('profile_image_upload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('currentProfileImage').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileImageUpload = document.getElementById('profile_image_upload');
+            const currentProfileImage = document.getElementById('currentProfileImage');
+
+            if (profileImageUpload && currentProfileImage) {
+                profileImageUpload.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            currentProfileImage.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
             }
         });
     </script>

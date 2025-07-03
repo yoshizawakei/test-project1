@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container">
-        <form action="{{ route("items.completePurchase", ["item" => $item->id]) }}" method="post">
+        <form action="{{ route("items.completePurchase", ["item" => $item->id]) }}" method="post" class="flex-form">
             @csrf
             <div class="content-left">
                 <div class="product-info">
@@ -47,7 +47,7 @@
                         <h3 class="section-title">配送先</h3>
                         <a href="{{ route("profile.address.edit", ["item_id" => $item->id]) }}" class="change-address-link">変更する</a>
                     </div>
-                    @if (Auth::user() && Auth::user()->profile)
+                    @if (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address)
                         <p class="address-postal-code">〒{{ substr(Auth::user()->profile->postal_code, 0, 3) }}-{{ substr(Auth::user()->profile->postal_code, 3) }}</p>
                         <p class="address-details">{{ Auth::user()->profile->address }}</p>
                         <p class="address-details">{{ Auth::user()->profile->building_name }}</p>
@@ -80,7 +80,11 @@
                         <span class="summary-value" id="selected-payment-method-summary">選択されていません</span>
                     </div>
                 </div>
-                <button type="sub" class="purchase-button">購入する</button>
+                @if (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address)
+                    <button type="sub" class="purchase-button">購入する</button>
+                @else
+                    <a href="{{ route("mypage.profile") }}" class="purchase-button">住所の設定へ</a>
+                @endif
             </div>
         </form>
     </div>

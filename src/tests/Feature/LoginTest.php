@@ -28,7 +28,7 @@ class LoginTest extends TestCase
             "password" => "password",
         ]);
 
-        $response->assertSessionHasErrors("email");
+        $response->assertSessionHasErrors("email", "メールアドレスを入力してください。");
         $this->assertGuest();
     }
 
@@ -42,7 +42,7 @@ class LoginTest extends TestCase
             "password" => "",
         ]);
 
-        $response->assertSessionHasErrors("password");
+        $response->assertSessionHasErrors("password", "パスワードを入力してください。");
         $this->assertGuest();
     }
 
@@ -72,7 +72,7 @@ class LoginTest extends TestCase
         ]);
 
         $user = User::where("email", "test1@example.com")->first();
-        $this->assertNotNull($user);
+        $this->assertNotNull($user, "ログイン情報が登録されていません。");
 
         $response = $this->post('/login', [
             'email' => 'test1@example.com',

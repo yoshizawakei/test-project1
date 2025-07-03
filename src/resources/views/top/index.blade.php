@@ -86,7 +86,8 @@
             });
 
             if (response.status === 401) {
-                mylistContent.innerHTML = "<p>マイリストを表示するにはログインが必要です。</p>";
+                // mylistContent.innerHTML = "<p>マイリストを表示するにはログインが必要です。</p>";
+                window.location.href = "{{ route("login") }}";
                 return;
             }
 

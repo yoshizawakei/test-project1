@@ -28,7 +28,7 @@ class RegistrationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $response->assertSessionHasErrors("name");
+        $response->assertSessionHasErrors("name", "お名前を入力してください。");
 
         $this->assertDatabaseMissing("users", ["email" => "test1@example.com"]);
     }
@@ -45,7 +45,7 @@ class RegistrationTest extends TestCase
             "password_confirmation" => "password",
         ]);
 
-        $response->assertSessionHasErrors("email");
+        $response->assertSessionHasErrors("email", "メールアドレスを入力してください。");
 
         $this->assertDatabaseMissing("users", ["name" => "Test User"]);
     }
@@ -62,7 +62,7 @@ class RegistrationTest extends TestCase
             "password_confirmation" => "",
         ]);
 
-        $response->assertSessionHasErrors("password");
+        $response->assertSessionHasErrors("password", "パスワードを入力してください。");
 
         $this->assertDatabaseMissing("users", ["email" => "test1@example.com"]);
     }
@@ -79,7 +79,7 @@ class RegistrationTest extends TestCase
             "password_confirmation" => "pass123",
         ]);
 
-        $response->assertSessionHasErrors("password");
+        $response->assertSessionHasErrors("password", "パスワードは8文字以上で入力してください。");
 
         $this->assertDatabaseMissing("users", ["email" => "test1@example.com"]);
     }
@@ -96,7 +96,7 @@ class RegistrationTest extends TestCase
             "password_confirmation" => "pass1234",
         ]);
 
-        $response->assertSessionHasErrors("password");
+        $response->assertSessionHasErrors("password", "パスワードと一致しません。");
 
         $this->assertDatabaseMissing("users", ["email" => "test1@example.com"]);
     }

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ExhibitionRequest;
 use App\Http\Requests\PurchaseRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ItemController extends Controller
 {
@@ -53,6 +55,11 @@ class ItemController extends Controller
     {
         $categories = Category::all();
         $brands = Brand::all();
+
+        // ★ここを一時的に追加してログに出力
+        Log::info('Categories loaded in ItemController@create: ' . $categories->pluck('name')->implode(', '));
+        Log::info('Number of categories loaded: ' . $categories->count());
+        
         return view("items.sell", compact("categories", "brands"));
     }
 
@@ -60,25 +67,39 @@ class ItemController extends Controller
     {
         $imagePath = null;
         if ($request->hasFile("image")) {
+
+            \Log::info('Request has file: ' . $request->hasFile("image"));
+            \Log::info('Uploaded file name: ' . $request->file("image")->getClientOriginalName());
+            \Log::info('Uploaded file size: ' . $request->file("image")->getSize());
+
             $imagePath = $request->file("image")->store("public/items");
+            \Log::info('File stored at: ' . $imagePath);
+
             $imagePath = str_replace("public/", "storage/", $imagePath);
+            \Log::info('Image path saved to DB: ' . $imagePath);
+        } else {
+            \Log::warning('No image file found in request during store operation.');
         }
 
+
         $userId = Auth::id();
+        $item = null;
 
-        $item = Item::create([
-            "item_name" => $request->item_name,
-            "price" => $request->price,
-            "description" => $request->description,
-            "image_path" => $imagePath,
-            "condition" => $request->condition,
-            "user_id" => $userId,
-            "brand_id" => $request->brand_id,
-            // "sold_at" => null,
-            // "buyer_id" => null,
-        ]);
+        DB::transaction(function () use ($request, $imagePath, $userId, &$item) {
+            $item = Item::create([
+                "item_name" => $request->item_name,
+                "price" => $request->price,
+                "description" => $request->description,
+                "image_path" => $imagePath,
+                "condition" => $request->condition,
+                "user_id" => $userId,
+                "brand_id" => $request->brand_id,
+                // "sold_at" => null,
+                // "buyer_id" => null,
+            ]);
 
-        $item->categories()->sync($request->category_ids);
+            $item->categories()->sync($request->category_ids);
+        });
 
         return redirect()->route("top.index")->with("success", "商品を出品しました。");
     }
