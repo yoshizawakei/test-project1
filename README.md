@@ -21,7 +21,7 @@ Laravel環境構築
 - MySQL 15.1
 
 ## ER図
-![ER図](test-project1.png)
+![ER図](test-project1_1.png)
 
 ## URL
 - 開発環境：http://localhost/
