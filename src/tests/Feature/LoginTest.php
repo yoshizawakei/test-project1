@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * A basic feature test example.

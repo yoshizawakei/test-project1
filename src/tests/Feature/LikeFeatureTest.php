@@ -12,6 +12,7 @@ use App\Models\Like;
 class LikeFeatureTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * テストのセットアップ

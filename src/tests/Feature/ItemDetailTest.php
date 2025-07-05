@@ -104,10 +104,9 @@ class ItemDetailTest extends TestCase
         ]);
         $item->categories()->attach([$category1->id, $category2->id, $category3->id]);
 
-        // 詳細ページにアクセス
         $response = $this->get("/items/{$item->id}");
         $response->assertStatus(200);
-        // カテゴリの表示
+
         $response->assertSeeText("Test Category");
         $response->assertSeeText("Another Category");
         $response->assertSeeText("Third Category");

@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container">
-        <form action="{{ route("items.completePurchase", ["item" => $item->id]) }}" method="post" class="flex-form">
+        <form action="{{ route("items.createCheckoutSession", ["item" => $item->id]) }}" method="post" class="flex-form" id="purchase-form">
             @csrf
             <div class="content-left">
                 <div class="product-info">
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 @if (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address)
-                    <button type="sub" class="purchase-button">購入する</button>
+                    <button type="submit" class="purchase-button" id="purchase-button">購入する</button>
                 @else
                     <a href="{{ route("mypage.profile") }}" class="purchase-button">住所の設定へ</a>
                 @endif
@@ -92,27 +92,51 @@
 @endsection
 
 @section('scripts')
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const paymentSelect = document.getElementById('payment-method-select');
             const paymentSummaryValue = document.getElementById('selected-payment-method-summary');
+            const form = document.getElementById('purchase-form');
+            const purchaseButton = document.getElementById('purchase-button');
 
             if (paymentSelect) {
-                if (paymentSelect.value === "") { // "選択してください" が選択されている場合
-                    paymentSummaryValue.textContent = '選択されていません';
-                } else {
-                    paymentSummaryValue.textContent = paymentSelect.options[paymentSelect.selectedIndex].textContent;
-                }
+                const updatePaymentSummary = () => {
+                    const selectedOption = paymentSelect.options[paymentSelect.selectedIndex];
+                    paymentSummaryValue.textContent = selectedOption.textContent === "" ? "選択されていません" : selectedOption.textContent;
+                };
 
-                paymentSelect.addEventListener('change', function () {
-                    if (this.value === "") { // "選択してください" が選択された場合
-                        paymentSummaryValue.textContent = '選択されていません';
-                    } else {
-                        paymentSummaryValue.textContent = this.options[this.selectedIndex].textContent;
-                    }
-                });
+                updatePaymentSummary();
+                paymentSelect.addEventListener("change", updatePaymentSummary);
             } else {
                 console.error("payment-method-select が見つかりません。");
+            }
+
+            
+            if (purchaseButton) {
+                form.addEventListener("submit", async function(event) {
+                    event.preventDefault();
+
+                    const selectedPaymentMethod = paymentSelect.value;
+                    const userProfileExists = document.querySelector("input[name='user_profile_exists']").value;
+
+                    if (selectedPaymentMethod === "") {
+                        alert("支払い方法を選択してください。");
+                        purchaseButton.disabled = false;
+                        return;
+                    }
+                    if (userProfileExists === "0") {
+                        alert("配送先が設定されていません");
+                        purchaseButton.disabled = false;
+                        return;
+                    }
+
+                    purchaseButton.disabled = true;
+
+                    form.submit();
+                });
+            } else {
+                console.error("purchase-button が見つかりません。");
             }
         });
     </script>

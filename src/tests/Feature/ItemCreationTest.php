@@ -80,14 +80,7 @@ class ItemCreationTest extends TestCase
             "category_id" => $itemData["category_ids"][0],
         ]);
 
-        $pathInFakeStorage = $item->image_path;
-        if (str_starts_with($pathInFakeStorage, 'public/')) {
-            $pathInFakeStorage = substr($pathInFakeStorage, strlen('public/'));
-        }
-        if (str_starts_with($pathInFakeStorage, 'storage/')) {
-            $pathInFakeStorage = substr($pathInFakeStorage, strlen('storage/'));
-        }
-        Storage::disk("public")->assertExists($pathInFakeStorage);
+        Storage::disk("public")->assertExists($item->image_path);
     }
 
     public function test_validation_errors_required_fields()

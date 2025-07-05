@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Profile;
+use Mockery;
+use Stripe\Checkout\Session;
 
 class AddressUpdateTest extends TestCase
 {
@@ -22,32 +24,28 @@ class AddressUpdateTest extends TestCase
     {
         parent::setUp();
 
-        // テスト用のユーザーを作成
+        Mockery::mock('alias:' . Session::class)
+            ->shouldReceive('create')
+            ->andReturn((object) ['url' => 'https://checkout.stripe.com/pay/mock_session_id'])
+            ->byDefault();
+
         User::factory()->create();
 
-        // テスト用の商品をFactoryで作成
         Item::factory()->create([
             "item_name" => "テスト商品A",
             "price" => 1000,
             "description" => "これはテスト商品Aです。",
-            "user_id" => User::factory()->create()->id, // 出品者ユーザーも作成し紐付ける
-            "sold_at" => null, // 初期状態は未購入
-            "buyer_id" => null, // 初期状態は購入者なし
+            "user_id" => User::factory()->create()->id,
+            "sold_at" => null,
+            "buyer_id" => null,
         ]);
     }
 
-    /**
-     * 送付先住所変更画面で登録した住所が商品購入画面に反映されることをテストします。
-     *
-     * @return void
-     */
     public function test_registered_address_reflects_on_product_purchase_screen()
     {
-        // 1. ユーザーにログインする
-        $user = User::factory()->create(["name" => "テスト太郎"]); // デフォルトのusername用
+        $user = User::factory()->create(["name" => "テスト太郎"]);
         $this->actingAs($user);
 
-        // 2. 送付先住所変更画面で住所を登録する
         $newAddressData = [
             "username" => "テストユーザー名",
             "postal_code" => "123-4567",
@@ -60,7 +58,6 @@ class AddressUpdateTest extends TestCase
         $response = $this->put(route("profile.address.update"), $newAddressData);
 
         $response->assertSessionHasNoErrors();
-        // ★ エラー1の修正: 'mypage' ルートが存在しない場合、'mypage.index' に変更
         $response->assertRedirect(route("mypage.index"));
 
         $this->assertDatabaseHas("profiles", [
@@ -71,7 +68,6 @@ class AddressUpdateTest extends TestCase
             "building_name" => $newAddressData["building_name"],
         ]);
 
-        // 3. 商品購入画面を再度開く
         $item = Item::first();
         $this->assertNotNull($item, "テスト商品が存在しません。setUpメソッドを確認してください。");
 
@@ -88,18 +84,11 @@ class AddressUpdateTest extends TestCase
         }
     }
 
-    /**
-     * 購入した商品に送付先住所が紐づいて登録されることをテストします。
-     *
-     * @return void
-     */
     public function test_purchase_links_to_registered_address()
     {
-        // 1. ユーザーにログインする
         $user = User::factory()->create(["name" => "購入者太郎"]);
         $this->actingAs($user);
 
-        // 2. 送付先住所変更画面で住所を登録する
         $addressData = [
             "username" => "購入者ユーザー名",
             "postal_code" => "987-6543",
@@ -125,32 +114,16 @@ class AddressUpdateTest extends TestCase
             "building_name" => $addressData["building_name"],
         ]);
 
-        // 3. 商品を購入する
         $purchaseData = [
             "payment_method" => "credit_card",
             "user_profile_exists" => "1",
         ];
 
-        $response = $this->post(route("items.completePurchase", $itemToPurchase), $purchaseData);
+        $response = $this->post(route("items.createCheckoutSession", $itemToPurchase), $purchaseData);
 
         $response->assertSessionHasNoErrors();
-        // ★ エラー2の修正: リダイレクトされずにOKレスポンスが返る場合
-        // もし購入完了後にページが表示される (200 OK) のが正しい挙動なら
-        $response->assertOk();
-        // さらに、購入完了を示す特定のテキストが表示されることをアサート
-        // 例: $response->assertSee("購入が完了しました"); // 実際のビューのテキストに合わせる
 
-        // もし購入完了後にやはりリダイレクトされるのが正しい挙動なら、
-        // 以下のassertRedirectのコメントアウトを外し、購入完了後の実際のURLに合わせる
-        // $response->assertRedirect(route("items.complete")); // 例: 購入完了画面へのルート
-
-        // 正しく購入情報が商品に紐づいて登録されたことを確認します。
-        $this->assertDatabaseHas("items", [
-            "id" => $itemToPurchase->id,
-            "buyer_id" => $user->id,
-        ]);
-
-        $updatedItem = Item::find($itemToPurchase->id);
-        $this->assertNotNull($updatedItem->sold_at, "商品のsold_atが更新されていません。");
+        $response->assertStatus(302);
+        $response->assertRedirectContains("https://checkout.stripe.com");
     }
 }

@@ -85,7 +85,7 @@ class CommentFeatureTest extends TestCase
         $user = User::factory()->create();
         $item = Item::factory()->create();
 
-        $longComment = str_repeat("a", 256); // 256文字のコメント
+        $longComment = str_repeat("a", 256);
 
         $response = $this->actingAs($user)->post(route("comments.store", $item), ["comment" => $longComment]);
 

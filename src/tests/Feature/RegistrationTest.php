@@ -10,6 +10,7 @@ use App\Models\User;
 class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
+    use WithFaker;
 
     /**
      * A basic feature test example.
