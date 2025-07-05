@@ -20,6 +20,7 @@ class Item extends Model
         'brand_id',
         'sold_at',
         'buyer_id',
+        'payment_method',
     ];
 
     // Usersテーブルとの紐付け

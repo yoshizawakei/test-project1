@@ -25,6 +25,7 @@ class CreateItemsTable extends Migration
             $table->timestamps();
             $table->timestamp("sold_at")->nullable();
             $table->foreignId("buyer_id")->nullable()->constrained("users")->onDelete("cascade");
+            $table->string("payment_method")->nullable();
         });
     }
 

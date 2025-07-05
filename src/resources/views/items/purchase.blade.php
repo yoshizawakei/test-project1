@@ -92,7 +92,7 @@
 @endsection
 
 @section('scripts')
-    <script src="https://js.stripe.com/v3/"></script>
+    <!-- <script src="https://js.stripe.com/v3/"></script> -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const paymentSelect = document.getElementById('payment-method-select');
@@ -112,7 +112,6 @@
                 console.error("payment-method-select が見つかりません。");
             }
 
-            
             if (purchaseButton) {
                 form.addEventListener("submit", async function(event) {
                     event.preventDefault();

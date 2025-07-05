@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
-                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ $profile->username ?? '' }}">
+                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ old("username",$profile->username ?? '') }}">
                 @error('username')
                     <div class="error-message">
                         {{ $message }}
@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ $profile->postal_code ?? '' }}">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ old("postal_code", $profile->postal_code ?? '') }}">
                 @error('postal_code')
                     <div class="error-message">
                         {{ $message }}
@@ -49,7 +49,7 @@
 
             <div class="form-group">
                 <label for="address" class="form-label">住所</label>
-                <input type="text" id="address" name="address" class="form-input" placeholder="例: 東京都渋谷区" value="{{ $profile->address ?? '' }}">
+                <input type="text" id="address" name="address" class="form-input" placeholder="例: 東京都渋谷区" value="{{ old("address", $profile->address ?? '') }}">
                 @error('address')
                     <div class="error-message">
                         {{ $message }}
@@ -60,7 +60,7 @@
             <div class="form-group">
                 <label for="building_name" class="form-label">建物名</label>
                 <input type="text" id="building_name" name="building_name" class="form-input"
-                    placeholder="例: 〇〇マンション101号室" value="{{ $profile->building_name ?? '' }}">
+                    placeholder="例: 〇〇マンション101号室" value="{{ old("building_name", $profile->building_name ?? '') }}">
                 @error('building_name')
                     <div class="error-message">
                         {{ $message }}

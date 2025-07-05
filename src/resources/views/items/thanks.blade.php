@@ -9,6 +9,7 @@
         <h2 class="page-title">購入完了</h2>
         <div class="success-message">
             <p>商品の購入が完了しました！</p>
+            <p>コンビニ払いを選択された方には、別途案内メールをお送りいたします。</p>
             <p>ご利用ありがとうございました。</p>
             <div class="button-group">
                 <a href="{{ route('top.index') }}" class="btn btn-primary">トップページに戻る</a>
