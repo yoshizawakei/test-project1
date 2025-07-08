@@ -12,8 +12,7 @@
                 <div class="product-info">
                     <div class="product-image-container">
                         @if ($item->image_path)
-                            <img src="{{ asset($item->image_path) }}" alt="{{ $item['item_name'] }}"
-                                class="product-image-thumbnail">
+                            <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}" class="product-image-thumbnail">
                         @else
                             <img src="{{ asset("images/no-image.png") }}" alt="画像なし" class="product-image-thumbnail">
                         @endif

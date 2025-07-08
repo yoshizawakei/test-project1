@@ -70,9 +70,9 @@ class ItemController extends Controller
         $imagePath = null;
         if ($request->hasFile("image")) {
 
-            $imagePath = $request->file("image")->store("items", "public");
+            $imagePath = $request->file("image")->store("public/items");
 
-            // $imagePath = str_replace("public/", "storage/", $imagePath);
+            $imagePath = str_replace("public/", "storage/", $imagePath);
         }
 
         $userId = Auth::id();
@@ -117,7 +117,7 @@ class ItemController extends Controller
         return view("items.edit", compact("item", "categories", "brands", "conditions"));
     }
 
-    public function update(Request $request, Item $item)
+    public function update(ExhibitionRequest $request, Item $item)
     {
         if (Auth::id() !== $item->user_id) {
             abort(403, "Unauthorized action.");

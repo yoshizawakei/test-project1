@@ -47,10 +47,12 @@
             <a href="{{ route("items.detail", $item->id) }}" class="mypage-product-item-link">
                 <div class="mypage-product-item">
                     <div class="mypage-product-image">
-                        <img src='{{ asset("$item->image_path") }}' alt="{{ $item->item_name }}">
-                        @if ($item->sold_at)
-                            <span class="sold-out-overlay">SOLD</span>
-                        @endif
+                        <div class="mypage-product-image">
+                            <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}">
+                            @if ($item->sold_at)
+                                <span class="sold-out-overlay">SOLD</span>
+                            @endif
+                        </div>
                     </div>
                     <div class="mypage-product-name">{{ $item->item_name }}</div>
                     <div class="mypage-product-price">¥{{ number_format($item->price) }}</div>
@@ -131,7 +133,7 @@
                             <a href="/items/${item.id}" class="mypage-product-item-link">
                                 <div class="mypage-product-item">
                                     <div class="mypage-product-image">
-                                        <img src="${item.image_path.startsWith('http') ? item.image_path : '/storage/' + item.image_path}" alt="${item.item_name}">
+                                        <img src="/${item.image_path}" alt="${item.item_name}">
                                         ${item.sold_out ? '<span class="sold-out-overlay">SOLD</span>' : ''}
                                     </div>
                                     <div class="mypage-product-name">${item.item_name}</div>

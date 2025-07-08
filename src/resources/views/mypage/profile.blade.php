@@ -12,7 +12,7 @@
             <div class="profile-image-section">
                 <label for="profile_image_upload" class="profile-image-placeholder">
                     @if (Auth::check() && Auth::user()->profile && Auth::user()->profile->profile_image)
-                        <img id="currentProfileImage" src="{{ asset("storage/" . $profile->profile_image) }}" alt="プロフィール画像">
+                        <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}">
                     @else
                         <img id="currentProfileImage" src="{{ asset('img/logo.svg') }}" alt="デフォルトプロフィール画像">
                     @endif
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
-                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ old("username",$profile->username ?? '') }}">
+                <input type="text" id="username" name="username" class="form-input" placeholder="ユーザー名を入力してください" value="{{ old("username", $profile->username ?? '') }}">
                 @error('username')
                     <div class="error-message">
                         {{ $message }}
@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="postcode" class="form-label">郵便番号</label>
-                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ old("postal_code", $profile->postal_code ?? '') }}">
+                <input type="text" id="postcode" name="postal_code" class="form-input" placeholder="例: 123-4567" value="{{ old("postal_code", isset($profile->postal_code) ? substr($profile->postal_code, 0, 3) . '-' . substr($profile->postal_code, 3) : '') }}">
                 @error('postal_code')
                     <div class="error-message">
                         {{ $message }}

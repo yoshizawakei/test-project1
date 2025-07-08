@@ -7,7 +7,7 @@
 @section('content')
     <div class="container">
         <div class="product-image">
-            <img src="{{ asset($item->image_path) }}" alt="商品画像">
+            <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}">
             @if ($item->sold_at)
                 <div class="sold-out-overlay">SOLD</div>
             @endif

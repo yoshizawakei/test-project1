@@ -19,8 +19,6 @@ services:
     depends_on:
       - mysql
       - chromedriver
-    env_file:
-      - src/.env.testing
 
   mysql:
     image: mysql:8.0.26

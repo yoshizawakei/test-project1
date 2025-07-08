@@ -156,12 +156,6 @@
                 return;
             }
 
-            // アップロードテキストとドラッグ＆ドロップテキストを非表示にする
-            // if (uploadText && dragDropText) {
-            //     uploadText.style.display = 'none';
-            //     dragDropText.style.display = 'none';
-            // }
-
             const file = files[0];
             if (!file.type.startsWith('image/')) {
                 alert('画像ファイルを選択してください。');

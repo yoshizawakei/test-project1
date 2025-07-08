@@ -21,7 +21,7 @@
             <a href="{{ route("items.detail", $item->id) }}" class="product-item-link">
                 <div class="product-item">
                     <div class="product-image">
-                        <img src='{{ asset("$item->image_path") }}' alt="{{ $item->item_name }}">
+                        <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}">
                         @if ($item->sold_at)
                             <div class="sold-out-overlay">
                                 SOLD

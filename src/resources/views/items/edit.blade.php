@@ -12,23 +12,9 @@
                 {{ session("success") }}
             </div>
         @endif
-        @if (session("error"))
-            <div class="alert alert-danger">
-                {{ session("error") }}
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         <form action="{{ route('items.update', $item->id) }}" method="post" enctype="multipart/form-data"
-            class="product-form">
+            class="product-form" novalidate>
             @csrf
             @method('PUT')
             <section class="form-section">
@@ -41,7 +27,7 @@
                     </label>
                     <div id="image-preview" class="image-preview">
                         @if ($item->image_path)
-                            <img src="{{ asset($item->image_path) }}" alt="現在の画像" class="preview-image">
+                            <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}"  class="preview-image">
                         @endif
                     </div>
                 </div>
@@ -61,6 +47,8 @@
                                 data-category-id="{{ $category->id }}">
                                 {{ $category->name }}
                             </button>
+                            <input type="hidden" name="category_ids[]" value="{{ $category->id }}" class="category-hidden-input"
+                                data-category-id="{{ $category->id }}" {{ in_array($category->id, old('category_ids', [])) ? '' : 'disabled' }}>
                         @endforeach
                     </div>
                     @error("category_ids")
