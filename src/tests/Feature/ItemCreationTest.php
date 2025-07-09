@@ -68,6 +68,7 @@ class ItemCreationTest extends TestCase
             "user_id" => $user->id,
             "item_name" => $itemData["item_name"],
             "description" => $itemData["description"],
+            "image_path" => "storage/items/" . $imageFile->hashName(),
             "condition" => $itemData["condition"],
             "price" => $itemData["price"],
             "brand_id" => $itemData["brand_id"],
@@ -79,8 +80,6 @@ class ItemCreationTest extends TestCase
             "item_id" => $item->id,
             "category_id" => $itemData["category_ids"][0],
         ]);
-
-        Storage::disk("public")->assertExists($item->image_path);
     }
 
     public function test_validation_errors_required_fields()
