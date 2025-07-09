@@ -2,8 +2,8 @@
 
 namespace Tests\Browser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illumminate\Foundation\Testing\WithFaker;
+// use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +15,7 @@ use Illuminate\Http\UploadedFile;
 
 class ProductCreateTest extends DuskTestCase
 {
-    use DatabaseMigrations;
+    // use DatabaseMigrations;
 
     /**
      * @var \App\Models\Category|null
@@ -59,7 +59,7 @@ class ProductCreateTest extends DuskTestCase
             $browser->loginAs($user)
                 ->visit('/sell')
                 ->waitForText("商品の出品", 10)
-                ->assertSee('商品の出品')
+                ->assertSee('商品の出品', )
                 ->attach('image', $productData['image']);
 
             $browser->waitFor('#category-buttons-container', 10);

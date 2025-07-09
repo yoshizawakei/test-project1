@@ -1,6 +1,8 @@
 <?php
 
 namespace Tests;
+
+use Laravel\Dusk\Browser;
 use Tests\CreatesApplication;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
@@ -26,6 +28,18 @@ abstract class DuskTestCase extends BaseTestCase
     }
 
     /**
+     * Setup the test environment.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->artisan('migrate:fresh', ['--seed' => true]);
+    }
+
+    /**
      * Create the RemoteWebDriver instance.
      *
      * @return \Facebook\WebDriver\Remote\RemoteWebDriver
@@ -38,6 +52,7 @@ abstract class DuskTestCase extends BaseTestCase
             return $items->merge([
                 '--disable-gpu',
                 '--headless',
+                '--no-sandbox',
             ]);
         })->all());
 
