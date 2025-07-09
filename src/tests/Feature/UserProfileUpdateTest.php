@@ -40,7 +40,8 @@ class UserProfileUpdateTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertSee('value="' . htmlspecialchars($profile->username) . '"', false);
-        $response->assertSee('value="' . htmlspecialchars($profile->postal_code) . '"', false);
+        $formattedPostalCode = substr($profile->postal_code, 0, 3) . '-' . substr($profile->postal_code, 3);
+        $response->assertSee('value="' . htmlspecialchars($formattedPostalCode) . '"', false);
         $response->assertSee('value="' . htmlspecialchars($profile->address) . '"', false);
         $response->assertSee('value="' . htmlspecialchars($profile->building_name) . '"', false);
 

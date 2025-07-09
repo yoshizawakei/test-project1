@@ -12,7 +12,7 @@
             <div class="profile-image-section">
                 <label for="profile_image_upload" class="profile-image-placeholder">
                     @if (Auth::check() && Auth::user()->profile && Auth::user()->profile->profile_image)
-                        <img src="{{ asset($item->image_path) }}" alt="{{ $item->item_name }}">
+                        <img id="currentProfileImage" src="{{ asset('storage/' . Auth::user()->profile->profile_image) }}" alt="プロフィール画像">
                     @else
                         <img id="currentProfileImage" src="{{ asset('img/logo.svg') }}" alt="デフォルトプロフィール画像">
                     @endif
