@@ -17,7 +17,7 @@ Laravel環境構築
 7. php artisan storage:link
 
 ## 使用技術(実行環境)
-- PHP 7.4.9
+- PHP 8.4.8
 - Laravel 8.83.29
 - MySQL 15.1
 
