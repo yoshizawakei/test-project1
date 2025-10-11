@@ -1,8 +1,8 @@
-# coachtech 勤怠管理アプリ
+# coachtechフリマ
 
 ## 環境構築
 Dockerビルト
-1. git clone git@github.com:yoshizawakei/test-project2.git
+1. git clone git@github.com:yoshizawakei/test-project1.git
 2. docker-compose up -d --build
 ※MySQLは、OSによって起動しない場合があるので、それぞれのPCに合わせてdocker-compose.ymlファイルを編集してください。
 
@@ -22,7 +22,7 @@ Laravel環境構築
 - MySQL 15.1
 
 ## ER図
-![ER図](test-project1.png)
+![ER図](test-project1-2.png)
 
 ## URL
 - 開発環境：http://localhost/
@@ -58,6 +58,7 @@ https://docs.stripe.com/payments/checkout?locale=ja-JP
 | email | varchar(255) |  | ◯ | ◯ |  |
 | email_verified_at | timestamp |  |  |  |  |
 | password | varchar(255) |  |  | ◯ |  |
+| profile_configured | boolean |  |  | ◯ |  |
 | remember_token | varchar(100) |  |  |  |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
@@ -66,11 +67,12 @@ https://docs.stripe.com/payments/checkout?locale=ja-JP
 | カラム名 | 型 | primary key | unique key | not null | foreign key |
 | --- | --- | --- | --- | --- | --- |
 | id | bigint | ◯ |  | ◯ |  |
-| user_id | bigint |  |  | ◯ | users(id) |
-| img_url | varchar(255) |  |  |  |  |
-| postcode | varchar(255) |  |  | ◯ |  |
+| user_id | bigint |  | ◯ | ◯ | users(id) |
+| username | varchar(255) |  | ◯ | ◯ |  |
+| profile_image | varchar(255) |  | ◯ | ◯ |  |
+| postal_code | varchar(7) |  |  | ◯ |  |
 | address | varchar(255) |  |  | ◯ |  |
-| building | varchar(255) |  |  |  |  |
+| building_name | varchar(255) |  |  |  |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
@@ -79,12 +81,15 @@ https://docs.stripe.com/payments/checkout?locale=ja-JP
 | --- | --- | --- | --- | --- | --- |
 | id | bigint | ◯ |  | ◯ |  |
 | user_id | bigint |  |  | ◯ | users(id) |
-| condition_id | bigint |  |  | ◯ | condtions(id) |
-| name | varchar(255) |  |  | ◯ |  |
+| item_name | varchar(255) |  |  | ◯ |  |
 | price | int |  |  | ◯ |  |
-| brand | varchar(255) |  |  |  |  |
-| description | varchar(255) |  |  | ◯ |  |
-| img_url | varchar(255) |  |  | ◯ |  |
+| description | text |  |  | ◯ |  |
+| image_path | varchar(255) |  |  | ◯ |  |
+| condition | varchar(255) |  |  | ◯ |  |
+| brand_id | bigint |  |  |  | brands(id) |
+| sold_at | timestamp |  |  |  |  |
+| buyer_id | bigint |  |  |  | users(id) |
+| payment_method | varchar(255) |  |  |  |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
@@ -94,60 +99,87 @@ https://docs.stripe.com/payments/checkout?locale=ja-JP
 | id | bigint | ◯ |  | ◯ |  |
 | user_id | bigint |  |  | ◯ | users(id) |
 | item_id | bigint |  |  | ◯ | items(id) |
-| comment | varchar(255) |  |  | ◯ |  |
+| comment | text |  |  | ◯ |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
 ### likesテーブル
 | カラム名 | 型 | primary key | unique key | not null | foreign key |
 | --- | --- | --- | --- | --- | --- |
+| id | bigint | ◯ |  | ◯ |  |
 | user_id | bigint |  | ◯(item_idとの組み合わせ) | ◯ | users(id) |
 | item_id | bigint |  | ◯(user_idとの組み合わせ) | ◯ | items(id) |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
-### sold_itemsテーブル
+### category_item (中間テーブル)
 | カラム名 | 型 | primary key | unique key | not null | foreign key |
 | --- | --- | --- | --- | --- | --- |
-| user_id | bigint |  |  | ◯ | users(id) |
-| item_id | bigint |  |  | ◯ | items(id) |
-| sending_postcode | varchar(255) |  |  | ◯ |  |
-| sending_address | varchar(255) |  |  | ◯ |  |
-| sending_building | varchar(255) |  |  |  |  |
-| created_at | created_at |  |  |  |  |
-| updated_at | updated_at |  |  |  |  |
-
-### category_itemsテーブル
-| カラム名 | 型 | primary key | unique key | not null | foreign key |
-| --- | --- | --- | --- | --- | --- |
+| id | bigint | ◯ |  | ◯ |  |
 | item_id | bigint |  | ◯(category_idとの組み合わせ) | ◯ | items(id) |
 | category_id | bigint |  | ◯(item_idとの組み合わせ) | ◯ | categories(id) |
-| created_at | timestamp |  |  |  |  |
-| updated_at | timestamp |  |  |  |  |
+| created_at | created_at |  |  |  |  |
+| updated_at | updated_at |  |  |  |  |
 
 ### categoriesテーブル
 | カラム名 | 型 | primary key | unique key | not null | foreign key |
 | --- | --- | --- | --- | --- | --- |
 | id | bigint | ◯ |  | ◯ |  |
-| category | varchar(255) |  |  | ◯ |  |
+| name | varchar(255) |  | ◯ | ◯ |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
-### conditionsテーブル
+### brandsテーブル
 | カラム名 | 型 | primary key | unique key | not null | foreign key |
 | --- | --- | --- | --- | --- | --- |
 | id | bigint | ◯ |  | ◯ |  |
-| condition | varchar(255) |  |  | ◯ |  |
+| name | varchar(255) |  | ◯ | ◯ |  |
+| created_at | timestamp |  |  |  |  |
+| updated_at | timestamp |  |  |  |  |
+
+### transactionsテーブル
+| カラム名 | 型 | primary key | unique key | not null | foreign key |
+| --- | --- | --- | --- | --- | --- |
+| id | bigint | ◯ |  | ◯ |  |
+| item_id | bigint |  |  | ◯ | items(id) |
+| seller_id | bigint |  |  | ◯ | users(id) |
+| buyer_id | bigint |  |  | ◯ | users(id) |
+| status | varchar(255) |  |  | ◯ |  |
+| stripe_session_id | varchar(255) |  | ◯ | ◯ |  |
+| completed_at | timestamp |  |  |  |  |
+| created_at | timestamp |  |  |  |  |
+| updated_at | timestamp |  |  |  |  |
+
+### ratingsテーブル
+| カラム名 | 型 | primary key | unique key | not null | foreign key |
+| --- | --- | --- | --- | --- | --- |
+| id | bigint | ◯ |  | ◯ |  |
+| transaction_id | bigint |  | ◯(rater_idとの組み合わせ) | ◯ | transactions(id) |
+| rater_id | bigint |  | ◯(transaction_idとの組み合わせ) | ◯ | users(id) |
+| rated_user_id | bigint |  |  | ◯ | users(id) |
+| score | tinyint |  |  | ◯ |  |
+| comment | text |  |  |  |  |
+| created_at | timestamp |  |  |  |  |
+| updated_at | timestamp |  |  |  |  |
+
+### messagesテーブル
+| カラム名 | 型 | primary key | unique key | not null | foreign key |
+| --- | --- | --- | --- | --- | --- |
+| id | bigint | ◯ |  | ◯ |  |
+| transaction_id | bigint |  |  | ◯ | transactions(id) |
+| user_id | bigint |  |  | ◯ | users(id) |
+| content | text |  |  | ◯ |  |
+| image_path | varchar(255) |  |  |  |  |
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
 ## テストアカウント
-name: 一般ユーザ
-email: general1@gmail.com
+name: 山田太郎
+email: test@example.com
 password: password
 -------------------------
-name: 一般ユーザ
-email: general2@gmail.com
+name: 佐藤花子
+email: test@example.co.jp
 password: password
 -------------------------
 
