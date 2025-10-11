@@ -36,16 +36,56 @@
                     <span class="comment-count">{{ $item->comments->count() }}</span>
                 </div>
             </div>
-            @if (Auth::check() && Auth::id() === $item->user_id)
-                @if ($item->sold_at)
-                    <p class="sold-out-message">この商品は売却済みです。</p>
+
+            @if (Auth::check())
+                {{-- 1. 認証ユーザーの場合 --}}
+
+                @if (Auth::id() === $item->user_id)
+                    {{-- 1-A. 出品者（自分）の場合 --}}
+                    @if ($item->sold_at)
+                        @if ($transaction)
+                            {{-- 売却済み & 取引成立済み: チャットボタンを表示 --}}
+                            <a href="{{ route('chat.show', $transaction) }}" class="purchase-button btn-primary">
+                                取引チャットへ進む
+                            </a>
+                        @else
+                            {{-- 売却済みだが取引情報がない: SOLD OUTメッセージ --}}
+                            <p class="sold-out-message">この商品は売却済みです。</p>
+                        @endif
+                    @else
+                        {{-- 未売却: 編集ボタンを表示 --}}
+                        <a href="{{ route("items.edit", $item->id) }}" class="edit-item-button">商品を編集する</a>
+                    @endif
+
+                @elseif ($item->sold_at)
+                    {{-- 1-B. 他のユーザーで、商品が売却済みの場合 --}}
+                    @if (Auth::id() === $item->buyer_id)
+                        @if ($transaction)
+                            {{-- 購入者 & 取引成立済み: チャットボタンを表示 --}}
+                            <a href="{{ route('chat.show', $transaction) }}" class="purchase-button btn-primary">
+                                取引チャットへ進む
+                            </a>
+                        @else
+                            {{-- 購入者だが取引情報がない: SOLD OUTメッセージ（イレギュラーケース） --}}
+                            <p class="sold-out-message">購入済みですが、チャット情報がありません。</p>
+                        @endif
+                    @else
+                        {{-- 全く関係のないユーザー: SOLD OUTメッセージ --}}
+                        <p class="sold-out-message">SOLD OUT</p>
+                    @endif
+
                 @else
-                    <a href="{{ route("items.edit", $item->id) }}" class="edit-item-button">商品を編集する</a>
-                @endif
-            @else
-                @if (!$item->sold_at)
+                    {{-- 1-C. 未購入＆未売却: 購入ボタン --}}
                     <a href="{{ route("items.purchase", $item->id) }}" class="purchase-button">購入手続きへ</a>
+                @endif
+
+            @else
+                {{-- 2. ゲストユーザーの場合 --}}
+                @if (!$item->sold_at)
+                    {{-- 未売却: ログインを促すか、購入ボタンをグレーアウト --}}
+                    <a href="{{ route("login") }}" class="purchase-button">購入手続きへ (ログインが必要です)</a>
                 @else
+                    {{-- 売却済み: SOLD OUTメッセージ --}}
                     <p class="sold-out-message">SOLD OUT</p>
                 @endif
             @endif

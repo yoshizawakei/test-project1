@@ -1,0 +1,518 @@
+body {
+    background-color: #f0f2f5;
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.transaction-screen-wrapper {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+}
+
+.sidebar-area {
+    width: 250px;
+    min-height: inherit;
+    background-color: #777;
+    color: white;
+    flex-shrink: 0;
+    padding: 20px;
+}
+
+.sidebar-area .sidebar-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 0;
+    border-bottom: 2px solid white;
+    padding-bottom: 10px;
+}
+
+.other-transactions-list {
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.other-transactions-list a {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+/* 右側のメインコンテンツエリア */
+.main-content-area {
+    flex-grow: 1;
+    background-color: white;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    /* デスクトップでサイドバーの右側を埋める */
+    max-width: calc(100% - 250px);
+    box-sizing: border-box;
+}
+
+/* ====================================
+ * 2. メインエリアヘッダー (取引相手名とボタン)
+ * ==================================== */
+
+.transaction-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.transaction-header-info .screen-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+    min-width: 0;
+    margin-right: 15px;
+}
+
+.transaction-header-info .btn-complete-transaction,
+.transaction-header-info .btn-completed-status {
+    background-color: #FF5555;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ====================================
+ * 3. 商品情報セクション
+ * ==================================== */
+
+.item-info-section {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.item-image-box {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    margin-right: 20px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.item-image-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.item-name {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    font-size: 1.2em;
+    color: #333;
+    margin: 0;
+}
+
+/* ====================================
+ * 4. チャットメッセージエリア (吹き出し)
+ * ==================================== */
+
+.chat-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 0 0 20px 0;
+    overflow-y: auto;
+}
+
+/* 吹き出しの基本デザイン */
+.message-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    /* ★メッセージ全体を上端に揃える★ */
+    gap: 8px;
+    /* 10pxから8pxに修正 */
+    width: 100%;
+}
+
+.message-item.my-message {
+    justify-content: flex-end;
+}
+
+/* メッセージの本体、ヘッダー、アクションをまとめるラッパー */
+.message-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* ★縦並びを確実に適用★ */
+    max-width: 65%;
+    /* 70%から65%に修正 */
+    gap: 3px;
+}
+
+/* 自分のメッセージの中身を右寄せに */
+.my-message .message-content-wrapper {
+    align-items: flex-end;
+}
+
+/* 相手のメッセージの中身を左寄せに */
+.their-message .message-content-wrapper {
+    align-items: flex-start;
+}
+
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+
+    /* ★高さをautoにして、内容に合わせて伸びるようにする★ */
+    height: auto;
+    min-height: 20px;
+    /* (任意) 最低限の高さ */
+}
+
+.my-message .message-bubble {
+    background-color: #d3d3d3;
+    color: #000000;
+}
+
+.message-item.their-message .message-bubble {
+    background-color: #e6e6e6;
+    color: #333;
+}
+
+/* テキスト要素のマージンをリセットし、吹き出しサイズを制御しやすくする */
+.message-text {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+}
+
+/* 編集・削除ボタンのグループ */
+.message-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+    font-size: 0.75em;
+}
+
+/* 自分のメッセージでは、ボタンを右端に寄せる */
+.my-message .message-actions {
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* 添付画像 */
+.message-image-content {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.file-name-display {
+    margin-left: 10px;
+    color: #6c757d;
+    /* 灰色 */
+    font-size: 0.9em;
+    max-width: 150px;
+    /* 長すぎるファイル名を制限 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 編集・削除ボタンの装飾 */
+.btn-edit-message,
+.btn-delete-message {
+    background: none;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    opacity: 1;
+    font-size: 0.9em;
+}
+
+.btn-edit-message:hover,
+.btn-delete-message:hover {
+    text-decoration: underline;
+}
+
+
+/* ====================================
+ * 5. メッセージ入力フォーム
+ * (変更なし)
+ * ==================================== */
+
+.chat-input-area-section {
+    flex-shrink: 0;
+    padding: 15px 0;
+    border-top: 1px solid #ddd;
+}
+
+.message-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.message-input-group {
+    /* テキストエリアとツール群全体をラップ */
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    gap: 10px;
+}
+
+.message-input {
+    flex-grow: 1;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 1em;
+    line-height: 1.4;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.message-send-tools {
+    /* 画像追加ボタンと送信ボタンのコンテナ */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.btn-add-image {
+    background-color: #fff;
+    border: 1px solid #FF5555;
+    color: #FF5555;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    border-radius: 5px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-send-message {
+    background-color: transparent;
+    border: none;
+    color: #FF5555;
+    font-size: 1.5em;
+    padding: 0;
+    cursor: pointer;
+}
+
+.hidden-file-input {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/* ====================================
+ * 6. メッセージ要素の詳細デザイン (マイページ準拠のプロフィール画像)
+ * (変更なし + 統合)
+ * ==================================== */
+
+/* マイページのアバター表示に合わせたスタイルを定義 */
+.profile-image-chat {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* アバターとユーザー名を横並びにするための追加CSS */
+.message-header-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+    width: 100%;
+}
+
+/* インラインのアバターサイズを少し調整（名前と並ぶため） */
+.message-meta-inline .profile-image-chat {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+/* 自分のメッセージでは、名前とアバターのブロック全体を右端に寄せる */
+.my-message .message-header-line {
+    justify-content: flex-end;
+}
+
+/* 相手のメッセージでは、名前とアバターのブロック全体を左端に寄せる */
+.their-message .message-header-line {
+    justify-content: flex-start;
+}
+
+/* ユーザー名テキストの調整 */
+.message-header-info {
+    font-size: 0.85em;
+    color: #333;
+    font-weight: bold;
+    width: auto;
+    flex-shrink: 1;
+    text-align: initial;
+}
+
+/* 以前のアバター要素はHTML構造変更に伴い非表示 */
+.message-meta-left,
+.message-meta-right {
+    display: none;
+}
+
+
+/* ====================================
+ * メディアクエリ (スマートフォン/狭い画面向け: 768px以下)
+ * (変更なし + 統合)
+ * ==================================== */
+
+@media (max-width: 768px) {
+
+    .profile-image-chat {
+        /* 元の40pxから32pxに調整 */
+        width: 32px;
+        height: 32px;
+    }
+
+    .message-meta-inline .profile-image-chat {
+        /* インラインのアバターもスマホサイズに */
+        width: 25px;
+        height: 25px;
+    }
+
+    /* 1. レイアウトの変更 */
+    .transaction-screen-wrapper {
+        display: block;
+    }
+
+    /* 左側のサイドバーを非表示にする */
+    .sidebar-area {
+        display: none;
+    }
+
+    .main-content-area {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    /* 2. ヘッダーの調整: ボタンとタイトルが縦積みになるように */
+    .transaction-header-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .transaction-header-info .screen-title {
+        font-size: 1.3em;
+        width: 100%;
+        margin-right: 0;
+        white-space: normal;
+    }
+
+    .transaction-header-info .btn-complete-transaction,
+    .transaction-header-info .btn-completed-status {
+        width: 100%;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* 3. 商品情報セクションの調整: 縦積みにする */
+    .item-info-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .item-image-box {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    /* 5. 入力フォームの調整: 縦積みにする */
+    .message-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* テキストエリアとツール群が横並びで画面幅を使う */
+    .message-input-group {
+        width: 100%;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 10px;
+    }
+
+    .message-input {
+        flex-grow: 1;
+    }
+
+    /* ツールボタンと送信ボタンのグループ */
+    .message-send-tools {
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin-top: 0;
+        align-items: center;
+    }
+
+    .btn-add-image {
+        padding: 8px 12px;
+        font-size: 0.8em;
+    }
+
+    .btn-send-message {
+        font-size: 1.5em;
+        padding: 0;
+    }
+
+    /* 吹き出しの最大幅を調整 */
+    .message-bubble {
+        max-width: 85%;
+    }
+}

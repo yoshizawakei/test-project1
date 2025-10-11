@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
 use App\Models\Item;
-use App\Models\User;
+
 
 class MypageController extends Controller
 {
@@ -21,21 +22,21 @@ class MypageController extends Controller
 
         $exhibitedItems = Item::where("user_id", $user->id)->get();
 
-        return view("mypage.index", compact("exhibitedItems"));
+        // FN001, FN003: 取引中の商品リストを取得
+        // Seller または Buyer として参加し、かつ status が 'completed' でない取引
+        $transactions = Transaction::with(['item'])
+            ->where(function ($query) use ($user) {
+                $query->where('seller_id', $user->id)
+                    ->orWhere('buyer_id', $user->id);
+            })
+            ->where('status', '!=', 'completed')
+            ->orderByDesc('updated_at') // FN003: 最新のメッセージや更新でソート
+            ->get();
+
+        // FN003: 取引通知機能は、このリストをマイページのサイドバー（または専用セクション）に表示することで達成します。
+        // updated_at が新しいものを上部に表示することで「別のメッセージ画面」として機能します。
+
+        return view("mypage.index", compact("exhibitedItems", "transactions"));
     }
 
-    public function getPurchasedItems(Request $request)
-    {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(["error" => "ログインしてください。"], 401);
-        } elseif (!$user->profile_configured) {
-            return response()->json(["error" => "プロフィールを設定してください。"], 403);
-        }
-
-        $purchasedItems = Item::where("buyer_id", $user->id)->get();
-
-        return response()->json($purchasedItems);
-    }
 }

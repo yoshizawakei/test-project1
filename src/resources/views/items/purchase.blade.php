@@ -9,6 +9,7 @@
         <form action="{{ route("items.createCheckoutSession", ["item" => $item->id]) }}" method="post" class="flex-form" id="purchase-form">
             @csrf
             <div class="content-left">
+                {{-- 商品情報セクション --}}
                 <div class="product-info">
                     <div class="product-image-container">
                         @if ($item->image_path)
@@ -26,12 +27,14 @@
                 </div>
                 <hr class="divider">
 
+                {{-- 支払い方法セクション --}}
                 <div class="payment-method-section">
                     <h3 class="section-title">支払い方法</h3>
+                    {{-- 【修正点1】old()関数を使って、エラー時に選択肢を保持する --}}
                     <select class="payment-select" id="payment-method-select" name="payment_method">
                         <option value="">選択してください</option>
-                        <option value="convenience_store">コンビニ払い</option>
-                        <option value="credit_card">カード支払い</option>
+                        <option value="convenience_store" {{ old('payment_method') == 'convenience_store' ? 'selected' : '' }}>コンビニ払い</option>
+                        <option value="credit_card" {{ old('payment_method') == 'credit_card' ? 'selected' : '' }}>カード支払い</option>
                     </select>
                     @error('payment_method')
                         <div class="error-message">
@@ -41,10 +44,12 @@
                 </div>
                 <hr class="divider">
 
+                {{-- 配送先セクション --}}
                 <div class="delivery-address-section">
                     <div class="delivery-address-header">
                         <h3 class="section-title">配送先</h3>
-                        <a href="{{ route("profile.address.edit", ["item_id" => $item->id]) }}" class="change-address-link">変更する</a>
+                        {{-- 【修正点2】リンク先をプロフィール編集に統一 (住所変更ページが存在しない前提) --}}
+                        <a href="{{ route("mypage.profile") }}#address-section" class="change-address-link">変更する</a>
                     </div>
                     @if (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address)
                         <p class="address-postal-code">〒{{ substr(Auth::user()->profile->postal_code, 0, 3) }}-{{ substr(Auth::user()->profile->postal_code, 3) }}</p>
@@ -52,7 +57,8 @@
                         <p class="address-details">{{ Auth::user()->profile->building_name }}</p>
                         <input type="hidden" name="user_profile_exists" value="1">
                     @else
-                        <p>配送先情報がありません。</p>
+                        {{-- 【修正点3】エラーメッセージの強調 --}}
+                        <p class="error-message">配送先情報が設定されていません。</p>
                         <input type="hidden" name="user_profile_exists" value="0">
                     @endif
                     @error('user_profile_exists')
@@ -76,13 +82,23 @@
                     </div>
                     <div class="summary-item">
                         <span class="summary-label">支払い方法</span>
-                        <span class="summary-value" id="selected-payment-method-summary">選択されていません</span>
+                        <span class="summary-value" id="selected-payment-method-summary">
+                            {{-- JSで初期値を設定するため、ここでは空のまま --}}
+                        </span>
                     </div>
                 </div>
-                @if (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address)
-                    <button type="submit" class="purchase-button" id="purchase-button">購入する</button>
+
+                {{-- 【修正点4】ボタンの出し分けロジックを簡素化し、IDを明確化 --}}
+                @php
+                    $hasAddress = (Auth::user() && Auth::user()->profile && Auth::user()->profile->postal_code && Auth::user()->profile->address);
+                @endphp
+
+                @if ($hasAddress)
+                    {{-- 住所が設定されている場合: 決済に進むボタン --}}
+                    <button type="submit" class="purchase-button" id="purchase-submit-button">購入を確定する</button>
                 @else
-                    <a href="{{ route("mypage.profile") }}" class="purchase-button">住所の設定へ</a>
+                    {{-- 住所が未設定の場合: 住所設定へ誘導するボタン --}}
+                    <a href="{{ route("mypage.profile") }}#address-section" class="purchase-button disabled-button">住所を設定してください</a>
                 @endif
             </div>
         </form>
@@ -91,50 +107,49 @@
 @endsection
 
 @section('scripts')
-    <!-- <script src="https://js.stripe.com/v3/"></script> -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const paymentSelect = document.getElementById('payment-method-select');
             const paymentSummaryValue = document.getElementById('selected-payment-method-summary');
             const form = document.getElementById('purchase-form');
-            const purchaseButton = document.getElementById('purchase-button');
+            const purchaseSubmitButton = document.getElementById('purchase-submit-button'); // ID変更
 
+            // 1. 支払いサマリーの動的更新
             if (paymentSelect) {
                 const updatePaymentSummary = () => {
                     const selectedOption = paymentSelect.options[paymentSelect.selectedIndex];
                     paymentSummaryValue.textContent = selectedOption.textContent === "" ? "選択されていません" : selectedOption.textContent;
                 };
 
-                updatePaymentSummary();
+                updatePaymentSummary(); // 初回ロード時 (old()の値があれば反映)
                 paymentSelect.addEventListener("change", updatePaymentSummary);
-            } else {
-                console.error("payment-method-select が見つかりません。");
             }
 
-            if (purchaseButton) {
-                form.addEventListener("submit", async function(event) {
-                    event.preventDefault();
-
+            // 2. フォーム送信時の処理 (重複送信防止と最終バリデーション)
+            if (purchaseSubmitButton) {
+                form.addEventListener("submit", function(event) {
                     const selectedPaymentMethod = paymentSelect.value;
                     const userProfileExists = document.querySelector("input[name='user_profile_exists']").value;
 
+                    // 支払い方法のクライアント側バリデーション
                     if (selectedPaymentMethod === "") {
+                        event.preventDefault(); 
                         alert("支払い方法を選択してください。");
-                        purchaseButton.disabled = false;
                         return;
                     }
+                    
+                    // 住所有無のチェック（念のため）
                     if (userProfileExists === "0") {
-                        alert("配送先が設定されていません");
-                        purchaseButton.disabled = false;
+                        event.preventDefault(); 
+                        // 既に住所設定へのリンクが表示されているため、アラートは不要な場合もあるが、念のため残す
+                        alert("配送先が設定されていません。住所を設定してから再度お試しください。"); 
                         return;
                     }
 
-                    purchaseButton.disabled = true;
-
-                    form.submit();
+                    // バリデーション成功後、ボタンを無効化して重複送信を防止
+                    purchaseSubmitButton.disabled = true;
+                    // form.submit() は event.preventDefault() が呼ばれなければ自動で実行される
                 });
-            } else {
-                console.error("purchase-button が見つかりません。");
             }
         });
     </script>

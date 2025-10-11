@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Facade\Ignition\Exceptions\ViewException;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\User;
@@ -14,10 +13,10 @@ use App\Http\Requests\ExhibitionRequest;
 use App\Http\Requests\PurchaseRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Transaction;
 
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
-use Illuminate\Support\Facades\URL;
 
 
 class ItemController extends Controller
@@ -47,15 +46,42 @@ class ItemController extends Controller
         return view("top.index", compact("items"));
     }
 
+    /**
+     * 商品詳細ページを表示する (取引チャット導線を追加)
+     * * @param \App\Models\Item $item
+     * @return \Illuminate\View\View
+     */
     public function show(Item $item)
     {
-        $item = Item::with(['user', 'categories', 'brand'])->findOrFail($item->id);
+        // 商品情報、ユーザー、ブランドはEager Loadingで取得
+        $item->load(['user', 'brand', 'categories']);
+
+        $transaction = null;
+        $user = Auth::user(); // 認証ユーザーを取得
+
+        // ログインしていて、かつ商品が売却済みの場合のみ、取引情報を確認する
+        if ($user && $item->sold_at !== null) {
+
+            // この商品に関連し、かつログインユーザーが当事者であるTransactionを取得
+            $transaction = Transaction::where('item_id', $item->id)
+                ->where(function ($query) use ($user) {
+                    // 自分が seller_id または buyer_id のいずれかであること
+                    $query->where('seller_id', $user->id)
+                        ->orWhere('buyer_id', $user->id);
+                })
+                ->first();
+        }
+
+        // 既存の show メソッドの戻り値に $transaction を追加
         return view("items.detail", [
             "item" => $item,
             "user" => $item->user,
             "brand" => $item->brand,
+            // 【重要】取引情報: 取引中の場合のみTransactionオブジェクト、それ以外はnull
+            "transaction" => $transaction,
         ]);
     }
+
 
     public function create()
     {
@@ -189,7 +215,7 @@ class ItemController extends Controller
         \Log::info('Selected Payment Method: ' . $selectedPaymentMethod);
 
         // Stripe APIキーを設定
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
         try {
             $paymentMethodTypes = [];
@@ -224,7 +250,7 @@ class ItemController extends Controller
                     ]
                 ],
                 'mode' => 'payment',
-                'success_url' => route('items.purchaseSuccess', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+                'success_url' => route('items.purchaseSuccess') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('items.detail', ['item' => $item->id]),
                 'payment_method_types' => $paymentMethodTypes, // 動的に設定
                 'payment_method_options' => $paymentMethodOptions, // コンビニ決済用オプション
@@ -266,10 +292,10 @@ class ItemController extends Controller
             return redirect()->route('top.index')->with('error', '不正なアクセスです。');
         }
 
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
         try {
-            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            $session = Session::retrieve($sessionId);
             \Log::info('Retrieved Stripe Session in purchaseSuccess: ' . json_encode($session));
 
             $paymentMethodChosen = $session->metadata->payment_method_chosen ?? 'unknown';
@@ -285,16 +311,35 @@ class ItemController extends Controller
                 $userId = $session->metadata->user_id ?? null;
 
                 if ($itemId && $userId) {
-                    $item = \App\Models\Item::find($itemId);
+                    $item = Item::find($itemId);
 
                     if ($item && $item->sold_at === null) {
-                        \DB::transaction(function () use ($item, $userId, $paymentMethodChosen) {
+                        \DB::transaction(function () use ($item, $userId, $paymentMethodChosen, $session) {
+                            // 1. Itemの更新 (売却済みに変更)
                             $item->update([
                                 "sold_at" => now(),
                                 "buyer_id" => $userId,
                                 "payment_method" => $paymentMethodChosen, // 決済方法を保存
                             ]);
+
+                            // 2. Transactionレコードの作成 (取引開始)
+                            Transaction::create([
+                                'item_id' => $item->id,
+                                'seller_id' => $item->user_id, // Itemモデルから出品者IDを取得
+                                'buyer_id' => $userId,
+                                'status' => 'in_progress', // 初期ステータス
+                                'stripe_session_id' => $session->id,
+                            ]);
+
+                            // 3. 取引完了メールの送信 (US005 / FN016)
+                            $seller = User::find($item->user_id);
+                            if ($seller) {
+                                \Illuminate\Support\Facades\Mail::to($seller->email)->send(
+                                    new \App\Mail\TransactionCompletedMail($item)
+                                );
+                            }
                         });
+
                         \Log::info("Item " . $itemId . " successfully purchased by user " . $userId . " via Stripe Checkout session: " . $sessionId . " (DB updated)");
                         return view("items.thanks"); // 成功画面表示
                     } elseif ($item && $item->sold_at !== null) {

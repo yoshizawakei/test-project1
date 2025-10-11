@@ -1,3 +1,5 @@
+
+
 .profile__container {
     max-width: 1230px;
     margin: 0 auto;
@@ -8,23 +10,24 @@
 }
 
 .profile__header {
+    /* アバターグループと編集ボタンを左右に配置 */
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 30px;
 }
 
 .profile__inner {
+    /* アバターと名前・評価のグループ */
     display: flex;
     align-items: center;
-    gap: 50px;
+    gap: 30px;
 }
 
 .user-avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background-color: #eee;
     border: 1px solid #ddd;
     flex-shrink: 0;
     overflow: hidden;
@@ -36,17 +39,33 @@
     object-fit: cover;
 }
 
-.profile__info {
+.user-info-wrapper {
     display: flex;
-    justify-content: space-around;
-    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .profile__name {
-    font-size: 2.5em;
+    font-size: 2em;
     margin: 0;
-    margin-bottom: 10px;
-    text-align: center;
+    text-align: left;
+}
+
+/* 評価星のスタイル */
+.user-rating {
+    color: #ffc107;
+    font-size: 1.2rem;
+    display: flex;
+    gap: 2px;
+}
+
+.user-rating .full-star,
+.user-rating .half-star {
+    color: #FFC107;
+}
+
+.user-rating .empty-star {
+    color: #ccc;
 }
 
 .profile__edit-button {
@@ -60,36 +79,52 @@
     white-space: nowrap;
     text-decoration: none;
     display: inline-block;
+    align-self: flex-start;
+    margin-top: 35px;
 }
 
 .profile__edit-button:hover {
     opacity: 0.8;
 }
 
+/* ====================================
+ * 2. タブセクション
+ * ==================================== */
 
-/* タブセクション */
-.mypage-tabs {
-    border-bottom: 2px solid #000;
+.mypage-tabs-content-wrapper {
+    max-width: 1230px;
     margin: 0 auto;
-    padding-left: 20px;
-    padding-right: 20px;
+}
+
+.mypage-tabs {
+    /* 修正: .tag に相当 */
+    border-bottom: 2px solid #000;
+    /* ご提示のCSSに合わせる */
+    margin: 0 auto;
 }
 
 .mypage-tabs__container {
-    padding: 10px 0;
-    margin-top: 0;
-    margin-left: 110px;
+    padding: 10px 0 10px 0;
+    /* ご提示のCSSに合わせる */
+    margin-left: 20px;
+    /* ご提示のCSSに合わせる */
     max-width: 1230px;
     display: flex;
-    gap: 20px;
+    gap: 40px;
+    /* ご提示のCSSに合わせる */
 }
 
 .mypage-tabs__button {
+    /* 修正: .tag-button に相当 */
     border: none;
-    background-color: white;
+    background-color: transparent;
     font-size: 24px;
+    /* ご提示のCSSに合わせる */
     padding: 5px 0;
     cursor: pointer;
+    color: #555;
+    position: relative;
+    transition: color 0.2s;
 }
 
 .mypage-tabs__button:hover {
@@ -98,14 +133,44 @@
 
 .mypage-tabs__button.active {
     color: #FF5555;
+    /* 修正: ご提示のCSSに合わせる */
+    font-weight: normal;
+    /* 太字を解除 */
 }
 
-/* 商品表示セクション */
+.mypage-tabs__button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #FF5555;
+    /* 修正: アクティブカラーに合わせる */
+}
+
+.transaction-badge {
+    background-color: #FF5555;
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+    margin-left: 5px;
+    display: inline-block;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+
+/* ====================================
+ * 3. 商品表示セクション
+ * ==================================== */
+
 .mypage-tab-content {
+    /* 修正: .page-content に相当 */
     max-width: 1230px;
     margin: 0 auto;
-    gap: 10px;
-    margin-top: 40px;
     padding-left: 20px;
     padding-right: 20px;
 }
@@ -115,38 +180,53 @@
 }
 
 .mypage-tab-content.active-content {
+    /* 修正: .page-content.active-content に相当 */
     display: grid;
+}
+
+.mypage-product-grid {
+    /* 修正: .product-grid に相当 */
     grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    /* ご提示のCSSに合わせる */
+    margin-top: 40px;
 }
 
 .mypage-product-item-link {
+    /* 修正: .product-item-link に相当 */
     text-decoration: none;
     color: inherit;
     display: block;
 }
 
 .mypage-product-item {
+    /* 修正: .product-item に相当 */
     width: 100%;
     background-color: #fff;
     border-radius: 5px;
     padding: 15px;
+    /* ご提示のCSSに合わせる */
     text-align: center;
     cursor: pointer;
+    box-shadow: none;
+    /* トップページのデザインに合わせ影を削除 */
+    overflow: hidden;
 }
 
 .mypage-product-image {
+    /* 修正: .product-image に相当 */
     position: relative;
-    background-color: #eee;
-    color: #777;
-    font-size: 1.2em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 200px;
+    /* ご提示のCSSに合わせる */
     margin-bottom: 10px;
+    /* ご提示のCSSに合わせる */
     border-radius: 3px;
     overflow: hidden;
+    display: flex;
+    /* 商品画像内のflex設定を維持 */
+    justify-content: center;
+    align-items: center;
 }
 
 .mypage-product-image img {
@@ -156,10 +236,12 @@
 }
 
 .sold-out-overlay {
+    /* 修正: .sold-out-overlay に相当 */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
     font-size: 2em;
@@ -178,6 +260,7 @@
 
 .mypage-product-name,
 .mypage-product-price {
+    /* 修正: .product-name, .product-price に相当 */
     font-size: 1.2em;
     font-weight: bold;
     text-align: left;
@@ -189,48 +272,94 @@
     font-size: 1.1em;
     color: #666;
     padding: 20px 0;
+    text-align: center;
+}
+
+/* 取引中の商品アイテム専用スタイル */
+.chat-link-button {
+    background-color: #FF5555;
+    border-color: #FF5555;
+    color: white;
+    width: 100%;
+    font-size: 0.9em;
+    margin-top: 5px;
+    padding: 5px 10px;
+}
+
+.transaction-status-badge {
+    background-color: #333 !important;
+    margin-top: 5px;
+    font-size: 0.8em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: block;
+}
+
+.chat-button-wrapper {
+    text-align: left;
 }
 
 
-/* レスポンシブデザインの調整 */
+/* ====================================
+ * 4. レスポンシブデザインの調整
+ * ==================================== */
+
 @media (max-width: 1024px) {
-    .mypage-tab-content.active-content {
+    .mypage-product-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .mypage-tab-content.active-content {
+    .mypage-product-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* タブコンテナのマージン調整 */
+    .mypage-tabs__container {
+        margin-left: 50px;
+        /* ご提示のCSSに合わせる */
+        gap: 20px;
+    }
+
+    /* プロフィールを縦並びにする */
     .profile__header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
     }
 
-    .user-avatar {
-        width: 100px;
-        height: 100px;
+    .profile__inner {
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .profile__name {
-        font-size: 2em;
+    .user-info-wrapper {
+        align-items: center;
     }
 
     .profile__edit-button {
         width: 100%;
         text-align: center;
+        margin-top: 20px;
+        align-self: center;
     }
 
-    .mypage-tabs__container {
-        margin-left: 0;
+    .mypage-tabs__button {
+        font-size: 1.4em;
+        padding: 5px 0;
     }
 }
 
 @media (max-width: 480px) {
-    .mypage-tab-content.active-content {
+    .mypage-product-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* タブコンテナのマージン調整 */
+    .mypage-tabs__container {
+        margin-left: 20px;
+        /* ご提示のCSSに合わせる */
     }
 
     .profile__name {
@@ -239,14 +368,22 @@
 
     .mypage-product-item {
         padding: 10px;
+        /* ご提示のCSSに合わせる */
     }
 
     .mypage-product-name,
     .mypage-product-price {
         font-size: 1em;
+        /* ご提示のCSSに合わせる */
     }
 
     .mypage-product-image {
         height: 150px;
+        /* ご提示のCSSに合わせる */
+    }
+
+    .mypage-tabs__button {
+        font-size: 1.2em;
+        padding: 5px 0;
     }
 }

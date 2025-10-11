@@ -6,9 +6,12 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MylistController;
 use App\Http\Controllers\MypageController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\PurchasedItemsController;
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Mail\TestMail;
 
 /*
@@ -48,7 +51,6 @@ Route::middleware(["auth", "verified"])->group(function () {
 // mypage関係
 Route::middleware("auth")->group(function () {
     Route::get("/mypage", [MypageController::class, "index"])->name("mypage.index");
-    Route::get("/api/purchased-items", [MypageController::class, "getPurchasedItems"])->name("mypage.purchased_items");
 
     // Profile関係
     Route::get("/mypage/profile", [ProfileController::class, "index"])->name("mypage.profile");
@@ -80,4 +82,31 @@ Route::get("/send-test-mail", function () {
 
     Mail::to("test@example")->send(new TestMail($name, $message_body));
     return "Test email sent successfully!";
+});
+
+// --- Transaction & Chat & Rating Routes ---
+Route::middleware("auth")->group(function () {
+    // FN002: 取引チャット表示 (GET)
+    Route::get("/transactions/{transaction}/chat", [ChatController::class, "show"])->name("chat.show");
+
+    // FN008, FN009: メッセージ投稿 (POST)
+    Route::post("/transactions/{transaction}/messages", [ChatController::class, "store"])->name("chat.message.store");
+
+    // FN010: メッセージ編集 (PUT/PATCH)
+    Route::put("/messages/{message}", [ChatController::class, "update"])->name("chat.message.update");
+
+    // FN011: メッセージ削除 (DELETE)
+    Route::delete("/messages/{message}", [ChatController::class, "destroy"])->name("chat.message.destroy");
+
+    // FN012, FN013: 取引評価 (POST)
+    Route::post("/transactions/{transaction}/rate", [RatingController::class, "store"])->name("transaction.rate.store");
+
+    // FN005: 評価平均のAPI
+    Route::get("/api/users/{user}/rating/average", [RatingController::class, "average"])->name("api.user.rating.average");
+
+    // FN004: ポーリング用APIルートの追加
+    Route::get("/api/transactions/{transaction}/messages", [ChatController::class, "getMessagesApi"])->name("api.chat.messages");
+
+    // 【追加】マイページ「購入した商品」タブ用 API
+    Route::get("/api/purchased-items", [PurchasedItemsController::class, "index"])->name("api.purchased.index");
 });

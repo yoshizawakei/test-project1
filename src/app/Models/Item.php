@@ -66,4 +66,9 @@ class Item extends Model
         return $this->likes()->count();
     }
 
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class, 'item_id');
+    }
+
 }
