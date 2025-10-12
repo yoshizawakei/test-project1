@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Item;
-use Illuminate\Support\Facades\Storage; // Storageファサードを追加
-use Illuminate\Support\Facades\Http;    // Httpファサード（Guzzle）を追加
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class ItemsTableSeeder extends Seeder
 {
@@ -22,7 +21,6 @@ class ItemsTableSeeder extends Seeder
                 "item_name" => "腕時計",
                 "price" => 15000,
                 "description" => "スタイリッシュなデザインのメンズ腕時計",
-                // S3の完全なURLをそのまま記述
                 "image_url" => "https://coachtech-matter.s3.ap-northeast-1.amazonaws.com/image/Armani+Mens+Clock.jpg",
                 "condition" => "良好",
                 "user_id" => 1,
@@ -175,26 +173,20 @@ class ItemsTableSeeder extends Seeder
             $categoryIds = $data['category_ids'];
             unset($data['category_ids']);
 
-            $imageUrl = $data['image_url']; // image_url を取得
-            unset($data['image_url']);       // itemsテーブルに保存しないので削除
+            $imageUrl = $data['image_url'];
+            unset($data['image_url']);
 
             $imagePath = null;
             try {
-                // HTTPクライアントで画像データを取得
                 $response = Http::get($imageUrl);
 
                 if ($response->successful()) {
-                    // URLからファイル名を抽出（URLエンコードされた部分も考慮）
                     $filename = basename(parse_url($imageUrl, PHP_URL_PATH));
-                    // S3のURLでは + がスペースになっている場合があるので、正しくデコード
                     $filename = urldecode($filename);
 
-                    // storage/app/public/items ディレクトリに画像を保存
-                    // Storage::disk('public')->put() は、保存先のファイルパスを返す (例: items/画像名.jpg)
-                    $storedFileName = 'items/' . $filename; // items/ディレクトリの下に元のファイル名で保存
+                    $storedFileName = 'items/' . $filename;
                     Storage::disk('public')->put($storedFileName, $response->body());
 
-                    // データベースに保存するパスは 'storage/items/画像名.jpg' の形式
                     $imagePath = 'storage/' . $storedFileName;
                 } else {
                     echo "Warning: Failed to download image from " . $imageUrl . " Status: " . $response->status() . "\n";
@@ -203,13 +195,10 @@ class ItemsTableSeeder extends Seeder
                 echo "Error downloading image " . $imageUrl . ": " . $e->getMessage() . "\n";
             }
 
-            $data['image_path'] = $imagePath; // データベースに保存するimage_pathを設定
-
-            // image_path が null のままの場合は、エラーを投げるかスキップする
+            $data['image_path'] = $imagePath;
             if (is_null($data['image_path'])) {
                 echo "Skipping item creation due to missing image_path for " . $data['item_name'] . "\n";
-                continue; // このアイテムの作成をスキップ
-                // または throw new \Exception("Image path is null for " . $data['item_name']);
+                continue;
             }
 
             $item = Item::create($data);

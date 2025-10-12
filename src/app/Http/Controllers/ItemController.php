@@ -53,7 +53,6 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        // 商品情報、ユーザー、ブランドはEager Loadingで取得
         $item->load(['user', 'brand', 'categories']);
 
         $transaction = null;
@@ -87,7 +86,7 @@ class ItemController extends Controller
     {
         $categories = Category::all();
         $brands = Brand::all();
-        
+
         return view("items.sell", compact("categories", "brands"));
     }
 
@@ -113,8 +112,6 @@ class ItemController extends Controller
                 "condition" => $request->condition,
                 "user_id" => $userId,
                 "brand_id" => $request->brand_id,
-                // "sold_at" => null,
-                // "buyer_id" => null,
             ]);
 
             $item->categories()->sync($request->category_ids);

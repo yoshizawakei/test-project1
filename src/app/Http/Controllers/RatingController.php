@@ -7,9 +7,9 @@ use App\Models\Rating;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;   // ★ Mailファサードをインポート
-use App\Mail\RatingNotification;       // ★ 作成したMailableをインポート
-use Illuminate\Http\JsonResponse;      // ★ JsonResponseをインポート
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RatingNotification;
+use Illuminate\Http\JsonResponse;
 
 class RatingController extends Controller
 {

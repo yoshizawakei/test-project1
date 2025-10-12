@@ -7,7 +7,6 @@ use App\Models\Transaction;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class ChatController extends Controller
 {
@@ -49,8 +48,6 @@ class ChatController extends Controller
         return view('chat.show', compact('transaction', 'transactions'));
     }
 
-    // ChatController.php
-
     public function store(MessageRequest $request, Transaction $transaction)
     {
         if (Auth::id() !== $transaction->seller_id && Auth::id() !== $transaction->buyer_id) {
@@ -59,18 +56,14 @@ class ChatController extends Controller
 
         $imagePath = null;
 
-        // 画像処理ロジック (シンプル化: Intervention\Image の複雑な処理を回避)
+        // 画像処理ロジック
         if ($request->hasFile('image')) {
             try {
                 $uploadedFile = $request->file('image');
 
-                // ★ Intervention\Image を使わず、LaravelのstoreAsで保存する ★
-                // public/storage/chat_images の下に保存される
                 $fileName = time() . '_' . $uploadedFile->getClientOriginalName();
                 $path = $uploadedFile->storeAs('public/chat_images', $fileName);
 
-                // 'public/' プレフィックスを削除して、データベース保存用のパスを作成
-                // 例: storage/chat_images/ファイル名
                 $imagePath = str_replace('public/', '', $path);
 
             } catch (\Exception $e) {

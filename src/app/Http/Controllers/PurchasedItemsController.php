@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transaction; // 取引モデルを起点とする
-use App\Models\Item; // 商品モデルをリレーションで使う
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
