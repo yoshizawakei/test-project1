@@ -20,7 +20,13 @@ class ChatController extends Controller
         }
 
         // 2. 現在の取引と関連データをロード
-        $transaction->load(['item', 'seller', 'buyer', 'ratings', 'messages.user.profile']);
+        $transaction->load([
+            'item',
+            'seller.profile', // 相手のアバター取得のために必要
+            'buyer.profile',  // 相手のアバター取得のために必要
+            'ratings',
+            'messages.user.profile'
+        ]);
 
         // ★★★ 3. サイドバー表示用データ：メッセージの最終更新日時で並べ替え ★★★
         $transactions = Transaction::with('item')

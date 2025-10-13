@@ -22,24 +22,24 @@ class MessageRequest extends FormRequest
     {
         return [
             'content' => ['required_without:image', 'string', 'max:400'],
-            // ★ imageに対するバリデーションルールを追加/確認 ★
             'image' => [
-                'nullable', // 画像は必須ではない
-                'image',    // ファイルが有効な画像であること
-                'mimes:jpeg,png', // 許可するファイル形式
-                'max:2048', // 最大ファイルサイズ（2MB）
+                'required_without:content',
+                'nullable',
+                'image',
+                'mimes:jpeg,png',
+                'max:2048',
             ],
         ];
     }
 
-    // エラーメッセージの日本語化
     public function messages(): array
     {
         return [
-            'content.required' => '本文を入力してください。',
+            'content.required_without' => '本文を入力してください。',
+            'image.required_without' => '',
             'content.max' => '本文は400文字以内で入力してください。',
-            'image.mimes' => 'jpeg「またはpngのみ対応しています。',
+            'image.mimes' => 'jpegまたはpngのみ対応しています。',
+            'image.max' => '画像ファイルのサイズは2MB以内でアップロードしてください。',
         ];
     }
-
 }

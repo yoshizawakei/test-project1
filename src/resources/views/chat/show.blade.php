@@ -6,106 +6,114 @@
 @endsection
 
 @section('content')
-        @php
-$opponent = $transaction->seller_id === Auth::id() ? $transaction->buyer : $transaction->seller;
-$item = $transaction->item;
-$hasRated = $transaction->ratings->where('rater_id', Auth::id())->isNotEmpty();
-        @endphp
+@php
+    $opponent = $transaction->seller_id === Auth::id() ? $transaction->buyer : $transaction->seller;
+    $item = $transaction->item;
+    $hasRated = $transaction->ratings->where('rater_id', Auth::id())->isNotEmpty();
+@endphp
 
-        <div class="transaction-screen-wrapper">
+<div class="transaction-screen-wrapper">
 
-            {{-- 左側サイドバー --}}
-            <div class="sidebar-area">
-                <p class="sidebar-title">その他の取引</p>
-                <div class="other-transactions-list">
-                    @forelse ($transactions as $sidebarTransaction)
-                        @if ($sidebarTransaction->item)
-                            <a href="{{ route('chat.show', ['transaction' => $sidebarTransaction->id]) }}"
-                                class="transaction-link {{ $sidebarTransaction->id == $transaction->id ? 'active' : '' }}">
-                                <div class="transaction-item-name">
-                                    {{ $sidebarTransaction->item->item_name }}
-                                </div>
-                            </a>
-                        @endif
-                    @empty
-                        <p class="no-transactions-message">取引中の商品はありません</p>
-                    @endforelse
-                </div>
+    {{-- 左側サイドバー --}}
+    <div class="sidebar-area">
+        <p class="sidebar-title">その他の取引</p>
+        <div class="other-transactions-list">
+            @forelse ($transactions as $sidebarTransaction)
+                @if ($sidebarTransaction->item)
+                    <a href="{{ route('chat.show', ['transaction' => $sidebarTransaction->id]) }}"
+                        class="transaction-link {{ $sidebarTransaction->id == $transaction->id ? 'active' : '' }}">
+                        <div class="transaction-item-name">
+                            {{ $sidebarTransaction->item->item_name }}
+                        </div>
+                    </a>
+                @endif
+            @empty
+                <p class="no-transactions-message">取引中の商品はありません</p>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- 右側メインコンテンツ --}}
+    <div class="main-content-area">
+        <div class="transaction-header-info">
+            <div class="profile-avatar-wrapper">
+                {{-- ★★★ 修正点: 定義済みのアクセサを使う ★★★ --}}
+                <img src="{{ asset($opponent->profile_image_path) }}" alt="{{ $opponent->name }}さんのアバター" class="profile-image-chat">
             </div>
+            <h1 class="screen-title">
+                「{{ $opponent->name }}」さんとの取引画面
+            </h1>
+            @if ($transaction->status !== 'completed' && !$hasRated)
+                <button type="button" class="btn btn-complete-transaction" data-bs-toggle="modal"
+                    data-bs-target="#ratingModal">
+                    取引を完了する
+                </button>
+            @else
+                <button type="button" class="btn btn-completed-status" disabled>
+                    取引完了
+                </button>
+            @endif
+        </div>
 
-            {{-- 右側メインコンテンツ --}}
-            <div class="main-content-area">
-                <div class="transaction-header-info">
-                    <h1 class="screen-title">
-                        「{{ $opponent->name }}」さんとの取引画面
-                    </h1>
-                    @if ($transaction->status !== 'completed' && !$hasRated)
-                        <button type="button" class="btn btn-complete-transaction" data-bs-toggle="modal"
-                            data-bs-target="#ratingModal">
-                            取引を完了する
-                        </button>
-                    @else
-                        <button type="button" class="btn btn-completed-status" disabled>
-                            取引完了
-                        </button>
-                    @endif
-                </div>
-
-                {{-- 取引中の商品 --}}
-                <div class="item-info-section">
-                    <div class="item-image-box">
-                        @if ($item && $item->image_path)
-                            <img src="{{ asset($item->image_path) }}" alt="商品画像" class="item-image">
-                        @else
-                            <div class="placeholder-image">画像なし</div>
-                        @endif
-                    </div>
-                    <div class="item-details">
-                        <h2 class="item-name">{{ $item->item_name ?? '商品情報なし' }}</h2>
-                        <p class="item-price">¥{{ number_format($item->price ?? 0) }}</p>
-                    </div>
-                </div>
-
-                {{-- チャットメッセージと入力フォーム --}}
-                <div class="chat-area">
-                    <div id="messages-container" class="chat-messages">
-                        @include('chat.messages_list', ['messages' => $transaction->messages])
-                    </div>
-
-                    @if ($transaction->status !== 'completed')
-                        <div class="chat-input-area-section">
-                            <form action="{{ route('chat.message.store', $transaction) }}" method="POST"
-                                enctype="multipart/form-data" class="message-form">
-                                @csrf
-                                <div class="message-input-group">
-                                    <textarea class="message-input" id="content" name="content" rows="1"
-                                        placeholder="取引メッセージを記入してください" required
-                                        oninput="autoExpand(this)">{{ old('content') }}</textarea>
-                                    <div class="message-send-tools">
-                                        <input type="file" id="image_upload" name="image" accept="image/*" class="hidden-file-input"
-                                            onchange="displayFileName(this)">
-                                        <label for="image_upload" class="btn btn-add-image">
-                                            画像を追加
-                                        </label>
-                                        <span id="file-name-display" class="file-name-display">ファイルが選択されていません</span>
-                                        <button type="submit" class="btn btn-send-message">
-                                            <i class="fas fa-paper-plane"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    @else
-                        <div class="chat-input-area-section completed-status-message">
-                            この取引は完了しています。
-                        </div>
-                    @endif
-                </div>
+        {{-- 取引中の商品 --}}
+        <div class="item-info-section">
+            <div class="item-image-box">
+                @if ($item && $item->image_path)
+                    <img src="{{ asset($item->image_path) }}" alt="商品画像" class="item-image">
+                @else
+                    <div class="placeholder-image">画像なし</div>
+                @endif
+            </div>
+            <div class="item-details">
+                <h2 class="item-name">{{ $item->item_name ?? '商品情報なし' }}</h2>
+                <p class="item-price">¥{{ number_format($item->price ?? 0) }}</p>
             </div>
         </div>
 
-        {{-- 取引評価モーダル --}}
-        @include('chat.rating_modal', ['transaction' => $transaction, 'opponent' => $opponent])
+        {{-- チャットメッセージと入力フォーム --}}
+        <div class="chat-area">
+            <div id="messages-container" class="chat-messages">
+                @include('chat.messages_list', ['messages' => $transaction->messages])
+            </div>
+
+            @if ($transaction->status !== 'completed')
+                <div class="chat-input-area-section">
+                    <form action="{{ route('chat.message.store', $transaction) }}" method="POST" enctype="multipart/form-data" class="message-form" novalidate>
+                        @csrf
+                        <div class="message-input-group">
+                            <textarea class="message-input" id="content" name="content" rows="1"
+                                placeholder="取引メッセージを記入してください" oninput="autoExpand(this)">{{ old('content') }}</textarea>
+                            @error('content')
+                                <div class="error-message">{{ $message }}</div>
+                            @enderror
+                            <div class="message-send-tools">
+                                <input type="file" id="image_upload" name="image" accept="image/*" class="hidden-file-input"
+                                    onchange="displayFileName(this)">
+                                <label for="image_upload" class="btn btn-add-image">
+                                    画像を追加
+                                </label>
+                                <span id="file-name-display" class="file-name-display">ファイルが選択されていません</span>
+                                @error('image')
+                                    <div class="error-message">{{ $message }}</div>
+                                @enderror
+                                <button type="submit" class="btn btn-send-message">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            @else
+                <div class="chat-input-area-section completed-status-message">
+                    この取引は完了しています。
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+{{-- 取引評価モーダル --}}
+@include('chat.rating_modal', ['transaction' => $transaction, 'opponent' => $opponent])
 
 @endsection
 

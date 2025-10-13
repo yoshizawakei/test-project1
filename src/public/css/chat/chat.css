@@ -31,7 +31,6 @@ body {
 
 .other-transactions-list {
     margin-top: 15px;
-    border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
 }
@@ -39,8 +38,18 @@ body {
 .other-transactions-list a {
     font-size: 1.1em;
     font-weight: bold;
-    color: white;
+    color: #000000;
     text-decoration: none;
+    margin-bottom: 15px;
+}
+
+.transaction-item-name {
+    display: block;
+    margin-bottom: 10px;
+    border: 1px solid white;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #EEEFEB;
 }
 
 /* 右側のメインコンテンツエリア */
@@ -88,6 +97,55 @@ body {
     white-space: nowrap;
     flex-shrink: 0;
 }
+
+/* ====================================
+ * 2. メインエリアヘッダー (取引相手名とボタン)
+ * ==================================== */
+
+.transaction-header-info {
+    /* ... 既存のスタイル ... */
+    display: flex;
+    /* justify-content: space-between;  <- 既存 */
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+
+    /* ★追加：アバターとタイトルを横並びにするためのFlexbox設定 ★*/
+    gap: 15px;
+    /* アバターとタイトルの間に隙間 */
+}
+
+/* ★追加：ヘッダーのアバターラッパーのスタイル ★*/
+.profile-avatar-wrapper {
+    /* 適切なサイズと円形にする */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    /* 縮まないようにする */
+}
+
+.profile-avatar-wrapper .profile-image-chat {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 画像全体を表示領域に収める */
+}
+
+.transaction-header-info .screen-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    /* マージンをリセット */
+    color: #333;
+    min-width: 0;
+    margin-right: auto;
+    /* ボタンを右端に寄せるために自動マージン */
+}
+
+/* ... 既存の btn-complete-transaction, btn-completed-status のスタイル ... */
 
 /* ====================================
  * 3. 商品情報セクション
@@ -515,4 +573,39 @@ body {
     .message-bubble {
         max-width: 85%;
     }
+}
+
+/* ====================================
+ * 7. バリデーションエラーメッセージ
+ * ==================================== */
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    text-align: left;
+    order: 10;
+    flex-basis: 100%;
+}
+
+.message-input-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.message-input {
+    order: 1;
+}
+
+.message-send-tools {
+    order: 2;
+}
+
+.message-send-tools+.error-message {
+    margin-top: 5px;
 }

@@ -81,4 +81,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->likes()->where("item_id", $item->id)->exists();
     }
+
+    // ... (中略) ...
+
+    public function getProfileImagePathAttribute()
+    {
+        if ($this->profile && $this->profile->profile_image) {
+            return 'storage/' . $this->profile->profile_image;
+        }
+
+        return 'img/logo.svg';
+    }
 }
