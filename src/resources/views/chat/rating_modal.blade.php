@@ -1,4 +1,4 @@
-{{-- chat.rating_modal.blade.php (デザイン組み込み修正版) --}}
+{{-- chat.rating_modal.blade.php (修正版) --}}
 
 <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -7,14 +7,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="{{ route('transaction.rate.store', $transaction) }}" method="POST">
+            @php
+                // ChatControllerから $isBuyer が渡されていることを前提とします。
+                // 渡されていない場合のエラーを防ぐため、ここで Auth::id() を使って安全に定義します。
+                $isBuyer = $transaction->buyer_id === Auth::id();
+
+                // ★ 修正箇所: フォームアクションを動的に決定 ★
+                // 購入者の場合: 取引完了と評価を行うルート
+                // 出品者の場合: 評価のみを行うルート
+                $formAction = $isBuyer
+                    ? route('transaction.complete_and_rate', $transaction)
+                    : route('transaction.rate.store', $transaction);
+
+                $ratedUser = $isBuyer ? $transaction->seller : $transaction->buyer;
+            @endphp
+
+            {{-- ★ 修正箇所: form actionを動的に変更 ★ --}}
+            <form action="{{ $formAction }}" method="POST">
                 @csrf
                 <div class="modal-body text-center pt-0 px-4">
-                    <h4 class="mb-4 fw-bold">取引が完了しました。</h4>
 
-                    @php
-                        $ratedUser = $transaction->seller_id === Auth::id() ? $transaction->buyer : $transaction->seller;
-                    @endphp
+                    {{-- ★ 修正箇所: タイトルを動的に変更 ★ --}}
+                    @if ($isBuyer && $transaction->status !== 'completed')
+                        <h4 class="mb-4 fw-bold">取引を完了し、評価します。</h4>
+                    @else
+                        <h4 class="mb-4 fw-bold">取引相手を評価してください。</h4>
+                    @endif
 
                     <div class="card p-3 mb-4" style="background-color: #f8f8f0; border: none;">
                         <p class="fw-bold mb-3">今回の取引相手（{{ $ratedUser->name }} さん）はどうでしたか？</p>

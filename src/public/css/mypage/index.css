@@ -299,6 +299,42 @@
     text-align: left;
 }
 
+/* mypage/index.css に追加するスタイル */
+
+/* 未読バッジの基本スタイル */
+.unread-badge {
+    /* 目を引く背景色（例: 赤） */
+    background-color: #e3342f;
+    color: white;
+    /* バッジの丸みを出す */
+    border-radius: 50%;
+    /* サイズ調整 */
+    padding: 0.2em 0.5em;
+    font-size: 0.75em;
+    font-weight: bold;
+    /* ボタン内での位置調整 */
+    margin-left: 5px;
+    display: inline-block;
+    min-width: 20px;
+    /* 1桁でも2桁でも見やすいように最小幅を設定 */
+    text-align: center;
+}
+
+/* 取引アイテム内でのチャットボタンのスタイル調整 */
+.chat-link-button {
+    /* 必要に応じてボタンの幅を調整 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    /* 見やすい高さに */
+}
+
+/* 必要に応じて、取引中の商品アイテム全体を視覚的に強調するスタイル */
+.transaction-item-wrapper {
+    /* 未読がある取引を目立たせる場合は、この要素にクラスを追加してスタイルを適用します */
+}
+
 
 /* ====================================
  * 4. レスポンシブデザインの調整

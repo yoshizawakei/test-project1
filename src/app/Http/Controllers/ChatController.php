@@ -7,6 +7,8 @@ use App\Models\Transaction;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Carbon;
+
 
 class ChatController extends Controller
 {
@@ -19,39 +21,54 @@ class ChatController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        // 既読処理: 相手が送った未読メッセージを既読にする
+        Message::where('transaction_id', $transaction->id)
+            ->where('user_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => Carbon::now()]);
+
+
         // 2. 現在の取引と関連データをロード
         $transaction->load([
             'item',
-            'seller.profile', // 相手のアバター取得のために必要
-            'buyer.profile',  // 相手のアバター取得のために必要
+            'seller.profile',
+            'buyer.profile',
             'ratings',
             'messages.user.profile'
         ]);
 
-        // ★★★ 3. サイドバー表示用データ：メッセージの最終更新日時で並べ替え ★★★
+        $isBuyer = ($transaction->buyer_id === $user->id);
+        $canRateBuyer = false; // 出品者が購入者を評価可能か
+        $shouldAutoRate = false; // 自動モーダル表示フラグ
+
+        // 取引が完了している場合の評価ロジック（変数を設定するのみ）
+        if ($transaction->status === 'completed') {
+            // 現在のユーザーが出品者である
+            if ($transaction->seller_id === $user->id) {
+                // 出品者から購入者への評価がまだ行われていない（seller_rating_id が NULLの場合）
+                if (is_null($transaction->seller_rating_id)) {
+                    $canRateBuyer = true;
+                    // 自動モーダル表示ロジック
+                    if (!is_null($transaction->buyer_rating_id)) {
+                        $shouldAutoRate = true;
+                    }
+                }
+            }
+        }
+        // 3. サイドバー表示用データ：メッセージの最終更新日時で並べ替え (ステータスに関わらず取得)
         $transactions = Transaction::with('item')
             ->where(function ($query) use ($user) {
-                // 売主または買主である取引
                 $query->where('seller_id', $user->id)
                     ->orWhere('buyer_id', $user->id);
             })
-            ->where('status', '!=', 'completed') // 完了していない取引のみ
-
-            // ★ 新しいメッセージ順に並べ替えるためのクエリ ★
-            // 各取引の最新のメッセージの created_at を取得し、それを使って並べ替える
-            ->addSelect([
-                'last_message_at' => Message::select('created_at')
-                    ->whereColumn('transaction_id', 'transactions.id')
-                    ->latest()
-                    ->limit(1)
-            ])
-            ->orderByDesc('last_message_at')
-            // last_message_at が NULL の場合（まだメッセージがない取引）は取引自体の updated_at 順にする
+            ->where('status', '!=', 'completed')
+            ->withMax('messages', 'created_at')
+            ->orderByDesc('messages_max_created_at')
             ->latest('updated_at')
             ->get();
 
-        // 4. Bladeにデータを渡す
-        return view('chat.show', compact('transaction', 'transactions'));
+        // 4. Bladeにデータを渡す (すべてのパスで実行されるようにする)
+        return view('chat.show', compact('transaction', 'transactions', 'canRateBuyer', 'isBuyer', 'shouldAutoRate'));
     }
 
     public function store(MessageRequest $request, Transaction $transaction)
@@ -87,6 +104,7 @@ class ChatController extends Controller
             'user_id' => Auth::id(),
             'content' => $validatedData['content'],
             'image_path' => $imagePath,
+            // 'read_at' は渡さないため、自動的に NULL (未読) になる
         ]);
 
         return redirect()->back()->with('success', 'メッセージが送信されました。');

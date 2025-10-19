@@ -163,5 +163,8 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'content' => 'メッセージ本文',
+        'image' => '画像ファイル',
+    ],
 ];

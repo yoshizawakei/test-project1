@@ -18,6 +18,10 @@ class Transaction extends Model
         'buyer_id',
         'status',
         'stripe_session_id', // 決済情報
+
+        'completed_at', // 取引完了日時
+        'buyer_rating_id', // 購入者による評価ID
+        'seller_rating_id', // 出品者による評価ID
     ];
 
     // 取引に関連する商品
@@ -44,10 +48,6 @@ class Transaction extends Model
         return $this->hasMany(Message::class);
     }
 
-        /**
-     * この取引に関連する全ての評価を取得します。
-     * Ratingモデルが transaction_id を外部キーとして使用することを想定しています。
-     */
     public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class);

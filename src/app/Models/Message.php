@@ -10,12 +10,16 @@ class Message extends Model
 {
     use HasFactory;
 
-    // Mass Assignment を許可するフィールドを定義 (FN008, FN009のデータ)
     protected $fillable = [
         'transaction_id',
         'user_id',
         'content',
         'image_path',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'read_at' => 'datetime',
     ];
 
     // メッセージの投稿者 (User)

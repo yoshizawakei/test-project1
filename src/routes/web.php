@@ -98,8 +98,13 @@ Route::middleware("auth")->group(function () {
     // FN011: メッセージ削除 (DELETE)
     Route::delete("/messages/{message}", [ChatController::class, "destroy"])->name("chat.message.destroy");
 
-    // FN012, FN013: 取引評価 (POST)
+    // FN012, FN013: 評価 (POST)
+
+    // ① 評価のみを行うルート (出品者向け、または取引完了後の評価)
     Route::post("/transactions/{transaction}/rate", [RatingController::class, "store"])->name("transaction.rate.store");
+
+    // ② 取引完了と評価を同時に行うルート (購入者向け)
+    Route::post("/transactions/{transaction}/complete-and-rate", [RatingController::class, "completeAndRate"])->name("transaction.complete_and_rate");
 
     // FN005: 評価平均のAPI
     Route::get("/api/users/{user}/rating/average", [RatingController::class, "average"])->name("api.user.rating.average");

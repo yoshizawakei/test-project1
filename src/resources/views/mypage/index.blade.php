@@ -38,9 +38,6 @@
 
                     {{-- ⭐ 評価星表示 ⭐ --}}
                     <div class="user-rating">
-                        @php
-                            $averageRating = 3.5; // ダミーデータ
-                        @endphp
                         @for ($i = 1; $i <= 5; $i++)
                             @if ($i <= floor($averageRating))
                                 <i class="fas fa-star full-star"></i>
@@ -115,6 +112,8 @@
                 @php
                     $item = $transaction->item;
                     $opponent = $transaction->seller_id === Auth::id() ? $transaction->buyer : $transaction->seller;
+                    // ★ 修正箇所: $unreadCount の定義を追加 ★
+                    $unreadCount = $transaction->unread_count ?? 0;
                 @endphp
                 <div class="mypage-product-item-wrapper transaction-item-wrapper">
                     <a href="{{ route("items.detail", $item->id) }}" class="mypage-product-item-link">
@@ -128,8 +127,12 @@
                                     <div class="mypage-product-price">¥{{ number_format($item->price) }}</div>
                                 </div>
                                 <div class="chat-button-wrapper mt-2">
-                                    <a href="{{ route('chat.show', $transaction) }}" class="btn btn-sm btn-primary chat-link-button">
+                                    <a href="{{ route('chat.show', $transaction) }}"
+                                        class="btn btn-sm btn-primary chat-link-button">
                                         取引チャットへ
+                                        @if ($unreadCount > 0)
+                                            <span class="badge unread-badge">{{ $unreadCount }}</span>
+                                        @endif
                                     </a>
                                 </div>
                             </div>
@@ -181,87 +184,87 @@
         }
 
         async function loadPurchasedItems() {
-                const purchasedContent = document.getElementById('purchased-content');
-                if (!purchasedContent) return;
+            const purchasedContent = document.getElementById('purchased-content');
+            if (!purchasedContent) return;
 
-                // 読み込み中メッセージを表示
-                purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品を読み込み中...</p>";
+            // 読み込み中メッセージを表示
+            purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品を読み込み中...</p>";
 
-                const apiUrl = "{{ route('api.purchased.index') }}";
+            const apiUrl = "{{ route('api.purchased.index') }}";
 
-                // ログインチェック（念のため）
-                if (!('{{ Auth::check() }}' === '1')) {
-                    purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品を表示するにはログインが必要です。</p>";
+            // ログインチェック（念のため）
+            if (!('{{ Auth::check() }}' === '1')) {
+                purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品を表示するにはログインが必要です。</p>";
+                return;
+            }
+
+            try {
+                const headers = {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    "Accept": "application/json"
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: "GET",
+                    headers: headers
+                });
+
+                // 401 Unauthorized (認証失敗) の場合の処理
+                if (response.status === 401) {
+                    purchasedContent.innerHTML = "<p class='no-items-message'>ログインが必要です。</p>";
                     return;
                 }
 
-                try {
-                    const headers = {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        "Accept": "application/json"
-                    };
+                if (!response.ok) {
+                    // 500エラーなどの場合
+                    const errorText = await response.text();
+                    console.error("API Fetch Error Body:", errorText);
+                    purchasedContent.innerHTML = `<p class='no-items-message'>APIエラーが発生しました。Status: ${response.status}。コンソールを確認してください。</p>`;
+                    return;
+                }
 
-                    const response = await fetch(apiUrl, {
-                        method: "GET",
-                        headers: headers
-                    });
+                const items = await response.json();
 
-                    // 401 Unauthorized (認証失敗) の場合の処理
-                    if (response.status === 401) {
-                        purchasedContent.innerHTML = "<p class='no-items-message'>ログインが必要です。</p>";
-                        return;
-                    }
+                // 取得データの中身を確認
+                console.log("Fetched Items Data:", items);
 
-                    if (!response.ok) {
-                        // 500エラーなどの場合
-                        const errorText = await response.text();
-                        console.error("API Fetch Error Body:", errorText);
-                        purchasedContent.innerHTML = `<p class='no-items-message'>APIエラーが発生しました。Status: ${response.status}。コンソールを確認してください。</p>`;
-                        return;
-                    }
+                if (items.length === 0) {
+                    purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品はまだありません。</p>";
+                } else {
+                    purchasedContent.innerHTML = "";
+                    // Laravelの asset('storage') の値をJS側で取得
+                    const storageUrl = "{{ asset('storage') }}";
 
-                    const items = await response.json();
+                    items.forEach(item => {
+                        let chatButtonHtml = '';
 
-                    // 取得データの中身を確認
-                    console.log("Fetched Items Data:", items);
+                        // チャット導線のロジック
+                        if (item.transaction_id) {
+                            const chatUrl = `/transactions/${item.transaction_id}/chat`;
 
-                    if (items.length === 0) {
-                        purchasedContent.innerHTML = "<p class='no-items-message'>購入した商品はまだありません。</p>";
-                    } else {
-                        purchasedContent.innerHTML = "";
-                        // Laravelの asset('storage') の値をJS側で取得
-                        const storageUrl = "{{ asset('storage') }}";
-
-                        items.forEach(item => {
-                            let chatButtonHtml = '';
-
-                            // チャット導線のロジック
-                            if (item.transaction_id) {
-                                const chatUrl = `/transactions/${item.transaction_id}/chat`;
-
-                                if (item.transaction_status && item.transaction_status !== 'completed') {
-                                    // 取引中の場合
-                                    chatButtonHtml = `
+                            if (item.transaction_status && item.transaction_status !== 'completed') {
+                                // 取引中の場合
+                                chatButtonHtml = `
                             <div class="chat-button-wrapper mt-2">
                                 <a href="${chatUrl}" class="btn btn-sm btn-primary chat-link-button">
                                     取引チャットへ進む
                                 </a>
                             </div>
                         `;
-                                } else {
-                                    // 取引完了の場合
-                                    chatButtonHtml = `
+                            } else {
+                                // 取引完了の場合
+                                chatButtonHtml = `
                             <div class="chat-button-wrapper mt-2">
                                 <span class="badge bg-success transaction-status-badge">取引完了・評価済み</span>
                             </div>
                         `;
-                                }
                             }
+                        }
 
-                            // 画像パスの生成: storageUrlとimage_pathを結合
-                            const imageUrl = item.image_path ? `{{ asset('') }}/${item.image_path}` : '{{ asset('img/logo.svg') }}';
+                        // 画像パスの生成: storageUrlとimage_pathを結合
+                        const imageUrl = item.image_path ? `{{ asset('') }}/${item.image_path}` : '{{ asset('img/logo.svg') }}';
 
-                            const productItemHtml = `
+                        const productItemHtml = `
                                 <div class="mypage-product-item-wrapper transaction-item-wrapper">
                                     <a href="/items/${item.id}" class="mypage-product-item-link">
                                         <div class="mypage-product-item">
@@ -282,14 +285,14 @@
                                     </a>
                                 </div>
                             `;
-                            purchasedContent.insertAdjacentHTML("beforeend", productItemHtml);
-                        });
-                    }
-                } catch (error) {
-                    console.error("購入した商品の読み込み中にエラーが発生しました:", error);
-                    purchasedContent.innerHTML = "<p>購入した商品の読み込み中にエラーが発生しました。詳細をコンソールで確認してください。</p>";
+                        purchasedContent.insertAdjacentHTML("beforeend", productItemHtml);
+                    });
                 }
+            } catch (error) {
+                console.error("購入した商品の読み込み中にエラーが発生しました:", error);
+                purchasedContent.innerHTML = "<p>購入した商品の読み込み中にエラーが発生しました。詳細をコンソールで確認してください。</p>";
             }
+        }
 
 
         function numberWithCommas(x) {

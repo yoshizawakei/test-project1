@@ -82,7 +82,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->likes()->where("item_id", $item->id)->exists();
     }
 
-    // ... (中略) ...
 
     public function getProfileImagePathAttribute()
     {
@@ -91,5 +90,29 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return 'img/logo.svg';
+    }
+
+    // このユーザーが関わる取引（出品側）
+    public function sellingTransactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'seller_id');
+    }
+
+    // このユーザーが関わる取引（購入側）
+    public function buyingTransactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'buyer_id');
+    }
+
+    // このユーザーが他のユーザーに行った評価
+    public function ratingsGiven(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'rater_id');
+    }
+
+    // このユーザーが他のユーザーから受けた評価
+    public function ratingsReceived(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'rated_user_id');
     }
 }

@@ -6,114 +6,141 @@
 @endsection
 
 @section('content')
-@php
-    $opponent = $transaction->seller_id === Auth::id() ? $transaction->buyer : $transaction->seller;
-    $item = $transaction->item;
-    $hasRated = $transaction->ratings->where('rater_id', Auth::id())->isNotEmpty();
-@endphp
+    @php
+        $user = Auth::user();
+        $opponent = $transaction->seller_id === $user->id ? $transaction->buyer : $transaction->seller;
+        $item = $transaction->item;
 
-<div class="transaction-screen-wrapper">
+        // Controllerから渡されない可能性のある変数に初期値を設定（PHP側でエラー回避）
+        $isBuyer = $isBuyer ?? ($transaction->buyer_id === $user->id); 
+        $canRateBuyer = $canRateBuyer ?? false;
+        $shouldAutoRate = $shouldAutoRate ?? false;
+        
+        // $hasRated の定義はそのまま
+        $hasRated = $transaction->ratings->where('rater_id', $user->id)->isNotEmpty();
+    @endphp
 
-    {{-- 左側サイドバー --}}
-    <div class="sidebar-area">
-        <p class="sidebar-title">その他の取引</p>
-        <div class="other-transactions-list">
-            @forelse ($transactions as $sidebarTransaction)
-                @if ($sidebarTransaction->item)
-                    <a href="{{ route('chat.show', ['transaction' => $sidebarTransaction->id]) }}"
-                        class="transaction-link {{ $sidebarTransaction->id == $transaction->id ? 'active' : '' }}">
-                        <div class="transaction-item-name">
-                            {{ $sidebarTransaction->item->item_name }}
-                        </div>
-                    </a>
+    <div class="transaction-screen-wrapper">
+
+        {{-- 左側サイドバー --}}
+        <div class="sidebar-area">
+            <p class="sidebar-title">その他の取引</p>
+            <div class="other-transactions-list">
+                @forelse ($transactions as $sidebarTransaction)
+                    @if ($sidebarTransaction->item)
+                        <a href="{{ route('chat.show', ['transaction' => $sidebarTransaction->id]) }}"
+                            class="transaction-link {{ $sidebarTransaction->id == $transaction->id ? 'active' : '' }}">
+                            <div class="transaction-item-name">
+                                {{ $sidebarTransaction->item->item_name }}
+                            </div>
+                        </a>
+                    @endif
+                @empty
+                    <p class="no-transactions-message">取引中の商品はありません</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- 右側メインコンテンツ --}}
+        <div class="main-content-area">
+            <div class="transaction-header-info">
+                <div class="profile-avatar-wrapper">
+                    <img src="{{ asset($opponent->profile_image_path) }}" alt="{{ $opponent->name }}さんのアバター"
+                        class="profile-image-chat">
+                </div>
+                <h1 class="screen-title">
+                    「{{ $opponent->name }}」さんとの取引画面
+                </h1>
+
+                {{-- ★ 取引完了ボタンのロジック ★ --}}
+                @if ($transaction->status !== 'completed')
+                    {{-- 完了ボタンは購入者 (buyer) のみ表示する --}}
+                    @if ($isBuyer)
+                        <button type="button" class="btn btn-complete-transaction" data-bs-toggle="modal"
+                            data-bs-target="#ratingModal">
+                            取引を完了する (評価へ)
+                        </button>
+                    @endif
+                @elseif ($transaction->status === 'completed')
+                    {{-- 取引完了後、出品者 ($canRateBuyer) が未評価の場合に評価ボタンを表示 --}}
+                    @if (isset($canRateBuyer) && $canRateBuyer)
+                        <button type="button" class="btn btn-rate-user" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                            購入者を評価する
+                        </button>
+                    @else
+                        {{-- それ以外の場合（購入者の場合 or 出品者で評価済の場合）は取引完了ステータスを表示 --}}
+                        <button type="button" class="btn btn-completed-status" disabled>
+                            取引完了
+                        </button>
+                    @endif
                 @endif
-            @empty
-                <p class="no-transactions-message">取引中の商品はありません</p>
-            @endforelse
-        </div>
-    </div>
-
-    {{-- 右側メインコンテンツ --}}
-    <div class="main-content-area">
-        <div class="transaction-header-info">
-            <div class="profile-avatar-wrapper">
-                {{-- ★★★ 修正点: 定義済みのアクセサを使う ★★★ --}}
-                <img src="{{ asset($opponent->profile_image_path) }}" alt="{{ $opponent->name }}さんのアバター" class="profile-image-chat">
-            </div>
-            <h1 class="screen-title">
-                「{{ $opponent->name }}」さんとの取引画面
-            </h1>
-            @if ($transaction->status !== 'completed' && !$hasRated)
-                <button type="button" class="btn btn-complete-transaction" data-bs-toggle="modal"
-                    data-bs-target="#ratingModal">
-                    取引を完了する
-                </button>
-            @else
-                <button type="button" class="btn btn-completed-status" disabled>
-                    取引完了
-                </button>
-            @endif
-        </div>
-
-        {{-- 取引中の商品 --}}
-        <div class="item-info-section">
-            <div class="item-image-box">
-                @if ($item && $item->image_path)
-                    <img src="{{ asset($item->image_path) }}" alt="商品画像" class="item-image">
-                @else
-                    <div class="placeholder-image">画像なし</div>
-                @endif
-            </div>
-            <div class="item-details">
-                <h2 class="item-name">{{ $item->item_name ?? '商品情報なし' }}</h2>
-                <p class="item-price">¥{{ number_format($item->price ?? 0) }}</p>
-            </div>
-        </div>
-
-        {{-- チャットメッセージと入力フォーム --}}
-        <div class="chat-area">
-            <div id="messages-container" class="chat-messages">
-                @include('chat.messages_list', ['messages' => $transaction->messages])
             </div>
 
-            @if ($transaction->status !== 'completed')
-                <div class="chat-input-area-section">
-                    <form action="{{ route('chat.message.store', $transaction) }}" method="POST" enctype="multipart/form-data" class="message-form" novalidate>
-                        @csrf
-                        <div class="message-input-group">
-                            <textarea class="message-input" id="content" name="content" rows="1"
-                                placeholder="取引メッセージを記入してください" oninput="autoExpand(this)">{{ old('content') }}</textarea>
-                            @error('content')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
-                            <div class="message-send-tools">
-                                <input type="file" id="image_upload" name="image" accept="image/*" class="hidden-file-input"
-                                    onchange="displayFileName(this)">
-                                <label for="image_upload" class="btn btn-add-image">
-                                    画像を追加
-                                </label>
-                                <span id="file-name-display" class="file-name-display">ファイルが選択されていません</span>
-                                @error('image')
+            {{-- 取引中の商品 --}}
+            <div class="item-info-section">
+                <div class="item-image-box">
+                    @if ($item && $item->image_path)
+                        <img src="{{ asset($item->image_path) }}" alt="商品画像" class="item-image">
+                    @else
+                        <div class="placeholder-image">画像なし</div>
+                    @endif
+                </div>
+                <div class="item-details">
+                    <h2 class="item-name">{{ $item->item_name ?? '商品情報なし' }}</h2>
+                    <p class="item-price">¥{{ number_format($item->price ?? 0) }}</p>
+                </div>
+            </div>
+
+            {{-- チャットメッセージと入力フォーム --}}
+            <div class="chat-area">
+                <div id="messages-container" class="chat-messages">
+                    @include('chat.messages_list', ['messages' => $transaction->messages])
+                </div>
+
+                @if ($transaction->status !== 'completed')
+                    <div class="chat-input-area-section">
+                        <form action="{{ route('chat.message.store', $transaction) }}" method="POST"
+                            enctype="multipart/form-data" class="message-form" novalidate>
+                            @csrf
+                            <div class="message-input-group">
+                                <textarea class="message-input" id="content" name="content" rows="1"
+                                    placeholder="取引メッセージを記入してください" oninput="autoExpand(this)">{{ old('content') }}</textarea>
+                                @error('content')
                                     <div class="error-message">{{ $message }}</div>
                                 @enderror
-                                <button type="submit" class="btn btn-send-message">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
+                                <div class="message-send-tools">
+                                    <input type="file" id="image_upload" name="image" accept="image/*" class="hidden-file-input"
+                                        onchange="displayFileName(this)">
+                                    <label for="image_upload" class="btn btn-add-image">
+                                        画像を追加
+                                    </label>
+                                    <span id="file-name-display" class="file-name-display">ファイルが選択されていません</span>
+                                    @error('image')
+                                        <div class="error-message">{{ $message }}</div>
+                                    @enderror
+                                    <button type="submit" class="btn btn-send-message">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            @else
-                <div class="chat-input-area-section completed-status-message">
-                    この取引は完了しています。
-                </div>
-            @endif
+                        </form>
+                    </div>
+                @else
+                    <div class="chat-input-area-section completed-status-message">
+                        この取引は完了しています。
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
-</div>
 
-{{-- 取引評価モーダル --}}
-@include('chat.rating_modal', ['transaction' => $transaction, 'opponent' => $opponent])
+    {{-- 取引評価モーダル --}}
+    @include('chat.rating_modal', [
+        'transaction' => $transaction, 
+        'opponent' => $opponent, 
+        'isBuyer' => $isBuyer ?? false, 
+        'canRateBuyer' => $canRateBuyer ?? false 
+    ])
 
 @endsection
 
@@ -122,6 +149,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // ★致命的エラー対策：Blade変数の渡し方に注意★
+        const transactionId = @json($transaction->id ?? null);
+        const storageKey = 'chat_message_' + transactionId;
+
         // CSRFトークンを全てのAjaxリクエストに含める設定
         $.ajaxSetup({
             headers: {
@@ -140,27 +171,54 @@
             const displayElement = document.getElementById('file-name-display');
             if (input.files && input.files[0]) {
                 const fileName = input.files[0].name;
-                // 画面上にファイル名を表示
                 displayElement.textContent = `ファイル: ${fileName}`;
-                // コンソールにもログ出力
-                console.log(`画像ファイル: ${fileName} が選択されました。`);
             } else {
-                // ファイルがクリアされた場合
                 displayElement.textContent = 'ファイルが選択されていません';
-                console.log('選択された画像ファイルがクリアされました。');
             }
         }
 
         $(document).ready(function () {
             const container = $('#messages-container');
+            const contentTextarea = document.getElementById('content');
+            const messageForm = $('.message-form');
 
+            // 1. 入力内容の保持と復元ロジック
+            const savedContent = sessionStorage.getItem(storageKey);
+            if (savedContent) {
+                contentTextarea.value = savedContent;
+            }
+
+            $(contentTextarea).on('input', function() {
+                sessionStorage.setItem(storageKey, this.value);
+            });
+
+            messageForm.on('submit', function() {
+                sessionStorage.removeItem(storageKey); 
+            });
+
+            // 2. 自動モーダル表示ロジック
+            const shouldAutoRate = @json($shouldAutoRate ?? false); // 未定義エラー対策
+
+            if (shouldAutoRate) {
+                console.log("出品者: 購入者からの評価完了済み。自動的に評価モーダルを表示します。");
+                const ratingModalElement = document.getElementById('ratingModal');
+                if (ratingModalElement) {
+                    const ratingModal = new bootstrap.Modal(ratingModalElement);
+                    setTimeout(() => {
+                        ratingModal.show();
+                    }, 300);
+                }
+            }
+            
+            // 3. 既存のDOM操作ロジック
+            
             // 初回ロード時に一番下にスクロール
             setTimeout(() => {
                 container.scrollTop(container[0].scrollHeight);
             }, 100);
 
             // 入力欄初期化
-            autoExpand(document.getElementById('content'));
+            autoExpand(contentTextarea);
 
             // メッセージ編集モーダルの表示
             $(document).on('click', '.btn-edit-message', function (e) {
